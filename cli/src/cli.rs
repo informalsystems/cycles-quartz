@@ -75,6 +75,7 @@ pub enum Command {
 pub enum ContractCommand {
     Build(ContractBuildArgs),
     Deploy(ContractDeployArgs),
+    Query(ContractQueryArgs),
 }
 
 #[derive(Debug, Clone, Subcommand, Serialize)]
@@ -160,6 +161,34 @@ pub struct ContractDeployArgs {
     pub wasm_bin_path: PathBuf,
 }
 
+
+#[derive(Debug, Parser, Clone, Serialize, Deserialize)]
+pub struct ContractQueryArgs {
+    /// <host>:<port> to tendermint rpc interface for this chain
+    #[arg(long)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub node_url: Option<String>,
+
+    /// Path to create & init a Quartz app, defaults to current path if unspecified
+    #[arg(short, long, value_parser = wasmaddr_to_id)]
+    pub contract: AccountId,
+
+    /// The network chain ID
+    #[arg(long)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub chain_id: Option<ChainId>,
+    
+    /// Name or address of private key with which to query balance of
+    #[arg(long)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tx_sender: Option<String>,
+
+    /// Query message
+    #[arg(long)]
+    pub query_msg: String,
+}
+
+
 #[derive(Debug, Parser, Clone, Serialize, Deserialize)]
 pub struct EnclaveBuildArgs {
     /// Path to Cargo.toml file of the Quartz app's enclave package, defaults to './enclave/Cargo.toml' if unspecified
@@ -191,6 +220,7 @@ impl ToFigment for Command {
             Command::Contract { contract_command } => match contract_command {
                 ContractCommand::Build(args) => Figment::from(Serialized::defaults(args)),
                 ContractCommand::Deploy(args) => Figment::from(Serialized::defaults(args)),
+                ContractCommand::Query(args) => Figment::from(Serialized::defaults(args)),
             },
             Command::Enclave { enclave_command } => match enclave_command {
                 EnclaveCommand::Build(args) => Figment::from(Serialized::defaults(args)),

@@ -6,6 +6,7 @@ pub mod utils;
 // commands
 pub mod contract_build;
 pub mod contract_deploy;
+pub mod contract_query;
 pub mod enclave_build;
 pub mod enclave_start;
 pub mod handshake;
@@ -36,6 +37,7 @@ impl Handler for Request {
             Request::Handshake(request) => request.handle(config).await,
             Request::ContractBuild(request) => request.handle(config).await,
             Request::ContractDeploy(request) => request.handle(config).await,
+            Request::ContractQuery(request) => request.handle(config).await,
             Request::EnclaveBuild(request) => request.handle(config).await,
             Request::EnclaveStart(request) => request.handle(config).await,
         }

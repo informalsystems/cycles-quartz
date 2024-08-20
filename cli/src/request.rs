@@ -4,12 +4,14 @@ use crate::{
     request::{
         contract_build::ContractBuildRequest, contract_deploy::ContractDeployRequest,
         enclave_build::EnclaveBuildRequest, enclave_start::EnclaveStartRequest,
+        contract_query::ContractQueryRequest,
         handshake::HandshakeRequest, init::InitRequest,
     },
 };
 
 pub mod contract_build;
 pub mod contract_deploy;
+pub mod contract_query;
 pub mod enclave_build;
 pub mod enclave_start;
 pub mod handshake;
@@ -21,6 +23,7 @@ pub enum Request {
     Handshake(HandshakeRequest),
     ContractBuild(ContractBuildRequest),
     ContractDeploy(ContractDeployRequest),
+    ContractQuery(ContractQueryRequest),
     EnclaveBuild(EnclaveBuildRequest),
     EnclaveStart(EnclaveStartRequest),
 }
@@ -69,6 +72,13 @@ impl TryFrom<ContractCommand> for Request {
                 }
                 .into())
             }
+            ContractCommand::Query(args) => {
+                Ok(ContractQueryRequest {
+                    contract: args.contract,
+                    query_msg: args.query_msg,
+                }
+                .into())
+            },
         }
     }
 }
