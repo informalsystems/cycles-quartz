@@ -1,4 +1,4 @@
-WASMD_VERSION?=v0.44.0
+WASMD_VERSION?=v0.52.0
 ORG?=informaldev
 IMAGE?=$(ORG)/wasmd
 .DEFAULT_GOAL := build

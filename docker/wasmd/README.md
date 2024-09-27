@@ -49,7 +49,7 @@ To build the image without running it, simply run:
 make
 ```
 
-This will, by default, build a Docker image tagged `informaldev/wasmd:v0.44.0`.
+This will, by default, build a Docker image tagged `informaldev/wasmd:v0.52.0`.
 
 ## Transacting on behalf of the accounts
 

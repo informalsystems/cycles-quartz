@@ -238,7 +238,6 @@ async fn deploy_and_handshake(
             _ => unreachable!("Unexpected response variant"),
         }
     };
-
     // Run handshake
     info!("Running handshake on contract `{}`", contract);
     let handshake = HandshakeRequest {

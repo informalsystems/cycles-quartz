@@ -28,7 +28,7 @@ pub fn wasmaddr_to_id(address_str: &str) -> Result<AccountId, anyhow::Error> {
 pub async fn block_tx_commit(client: &HttpClient, tx: Hash) -> Result<TmTxResponse, anyhow::Error> {
     let re = Regex::new(r"tx \([A-F0-9]{64}\) not found")?;
 
-    tokio::time::sleep(Duration::from_millis(400)).await;
+    tokio::time::sleep(Duration::from_millis(4000)).await;
     loop {
         match client.tx(tx, false).await {
             Ok(resp) => {
