@@ -20,7 +20,7 @@ loader.env.RA_TLS_EPID_API_KEY = { passthrough = true }
 loader.env.MYAPP_DATA = { passthrough = true }
 
 loader.argv = ["quartz-enclave",
-                "--chain-id", "testing",
+                "--chain-id", "pion-1",
                 "--trusted-height", "{{ trusted_height }}",
                 "--trusted-hash", "{{ trusted_hash }}"]
 

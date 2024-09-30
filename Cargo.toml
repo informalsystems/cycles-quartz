@@ -39,7 +39,7 @@ hex-literal = { version = "0.4.1", default-features = false }
 k256 = { version = "0.13.2", default-features = false, features = ["ecdsa", "alloc"] }
 num-bigint = { version = "0.4.4", default-features = false }
 p256 = { version = "0.13.2", default-features = false }
-prost = { version = "0.13.1", default-features = false }
+prost = { version = "0.13", default-features = false }
 rand = { version = "0.8.5", default-features = false, features = ["getrandom"] }
 rand_core = { version = "0.6", default-features = false, features = ["std"] }
 reqwest = { version = "0.12.2", default-features = false, features = ["json", "rustls-tls"] }
@@ -51,9 +51,9 @@ sha2 = { version = "0.10.8", default-features = false }
 subtle-encoding = { version = "0.5.1", default-features = false, features = ["bech32-preview"] }
 tempfile = { version = "3", default-features = false }
 thiserror = { version = "1.0.49", default-features = false }
-tokio = { version = "=1.39.2", default-features = false, features = ["macros", "rt"] }
-tonic = { version = "=0.12.1", default-features = false, features = ["codegen", "prost", "transport"] }
-tonic-build = { version = "=0.12.1", default-features = false, features = ["prost", "transport"] }
+tokio = { version = "1.39.2", default-features = false, features = ["macros", "rt"] }
+tonic = { version = "0.12.3", default-features = false, features = ["codegen", "prost", "transport"] }
+tonic-build = { version = "0.12.3", default-features = false, features = ["prost", "transport"] }
 tower = { version = "0.5.0" }
 tracing = { version = "0.1.39", default-features = false }
 tracing-subscriber = { version = "0.3.17", default-features = false, features = ["fmt"] }
@@ -64,8 +64,8 @@ x509-parser = { version = "0.16.0", default-features = false, features = ["verif
 zeroize = { version = "1.7.0", default-features = false }
 
 # cosmos
-cosmos-sdk-proto = { version = "0.22.0", default-features = false }
-cosmrs = { version = "=0.17.0", default-features = false }
+cosmos-sdk-proto = { version = "0.25.0", default-features = false }
+cosmrs = { version = "0.20.0", default-features = false }
 cosmwasm-schema = { version = "2.1.1", default-features = false }
 cosmwasm-std = { version = "2.1.1", default-features = false, features = ["std", "abort"] }
 cw-storage-plus = { version = "2.0.0", default-features = false }

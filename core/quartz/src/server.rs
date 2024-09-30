@@ -79,6 +79,7 @@ pub trait WebSocketHandler: Send + Sync + 'static {
 #[derive(Debug, Clone)]
 pub struct WsListenerConfig {
     pub node_url: String,
+    pub websocket_url: String,
     pub chain_id: String,
     pub tx_sender: String,
     pub trusted_hash: Hash,
@@ -154,15 +155,21 @@ impl QuartzServer {
         ws_handlers: &Vec<Box<dyn WebSocketHandler>>,
         ws_config: WsListenerConfig,
     ) -> Result<(), QuartzError> {
-        let wsurl = format!("ws://{}/websocket", ws_config.node_url);
+        let wsurl = ws_config.websocket_url.clone();
         let (client, driver) = WebSocketClient::new(wsurl.as_str()).await.unwrap();
         let driver_handle = tokio::spawn(async move { driver.run().await });
         let mut subs = client.subscribe(Query::from(EventType::Tx)).await.unwrap();
 
         while let Some(Ok(event)) = subs.next().await {
+            // println!("Received event: {:?}", event); // Log the entire event
             for handler in ws_handlers {
-                if let Err(e) = handler.handle(event.clone(), ws_config.clone()).await {
-                    eprintln!("Error in event handler: {:?}", e);
+                match handler.handle(event.clone(), ws_config.clone()).await {
+                    Ok(_) => println!("Event processed successfully"),
+                    Err(e) => {
+                        eprintln!("Error in event handler: {:?}", e);
+                        eprintln!("Failed event: {:?}", event);
+                        // You might want to add more specific error logging here
+                    }
                 }
             }
         }

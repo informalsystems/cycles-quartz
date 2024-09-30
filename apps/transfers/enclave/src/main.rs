@@ -28,7 +28,7 @@ use cli::Cli;
 use quartz_common::{
     contract::state::{Config, LightClientOpts},
     enclave::{
-        attestor::{self, Attestor, DefaultAttestor},
+        attestor::{Attestor, DcapAttestor},
         server::{QuartzServer, WsListenerConfig},
     },
 };
@@ -56,7 +56,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
 
     #[cfg(not(feature = "mock-sgx"))]
-    let attestor = attestor::DcapAttestor {
+    let attestor = DcapAttestor {
         fmspc: args.fmspc.expect("FMSPC is required for DCAP"),
     };
 
@@ -73,6 +73,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let ws_config = WsListenerConfig {
         node_url: args.node_url,
+        websocket_url: args.websocket_url,
         tx_sender: args.tx_sender,
         trusted_hash: args.trusted_hash,
         trusted_height: args.trusted_height,
@@ -82,7 +83,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let sk = Arc::new(Mutex::new(None));
 
     // Event queue
-    let (tx, mut rx) = mpsc::channel::<TransfersOp<DefaultAttestor>>(1);
+    let (tx, mut rx) = mpsc::channel::<TransfersOp<DcapAttestor>>(1);
     // Consumer task: dequeue and process events
     tokio::spawn(async move {
         while let Some(op) = rx.recv().await {

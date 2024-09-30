@@ -17,7 +17,7 @@ use crate::{config::Config, error::Error};
 
 pub fn wasmaddr_to_id(address_str: &str) -> Result<AccountId, anyhow::Error> {
     let (hr, _) = bech32_decode(address_str).map_err(|e| anyhow!(e))?;
-    if hr != "wasm" {
+    if hr != "neutron" {
         return Err(anyhow!(hr));
     }
 
@@ -60,7 +60,7 @@ pub async fn block_tx_commit(client: &HttpClient, tx: Hash) -> Result<TmTxRespon
 
 // Queries the chain for the latested height and hash
 pub fn query_latest_height_hash(node_url: &String) -> Result<(Height, Hash), Error> {
-    let httpurl = Url::parse(&format!("http://{}", node_url))
+    let httpurl = Url::parse(&format!("https://{}", node_url))
         .map_err(|e| Error::GenericErr(e.to_string()))?;
     let wasmd_client = CliWasmdClient::new(httpurl);
 

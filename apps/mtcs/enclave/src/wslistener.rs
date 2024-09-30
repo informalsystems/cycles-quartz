@@ -50,7 +50,7 @@ impl<A: Attestor> WebSocketHandler for MtcsService<A> {
                         "message.sender" => {
                             sender = values.first().cloned();
                         }
-                        "wasm._contract_address" => {
+                        "neutron._contract_address" => {
                             contract_address = values.first().cloned();
                         }
                         _ => {}
@@ -72,6 +72,7 @@ impl<A: Attestor> WebSocketHandler for MtcsService<A> {
                     .map_err(|e| anyhow!(e))?,
                 sender.expect("infallible"),
                 &config.node_url,
+                &config.chain_id,
             )
             .await?;
         }
@@ -98,9 +99,10 @@ async fn handler<A: Attestor>(
     contract: &AccountId,
     sender: String,
     node_url: &str,
+    chain_id: &str,
 ) -> Result<()> {
-    let chain_id = &ChainId::from_str("testing")?;
-    let httpurl = Url::parse(&format!("http://{}", node_url))?;
+    let chain_id = &ChainId::from_str(chain_id)?;
+    let httpurl = Url::parse(node_url)?; // TODO Improve
     let wasmd_client = CliWasmdClient::new(httpurl);
 
     // Query obligations and liquidity sources from chain
@@ -130,8 +132,14 @@ async fn handler<A: Attestor>(
     });
 
     // Send setoffs to mtcs contract on chain
-    let output =
-        wasmd_client.tx_execute(contract, chain_id, 2000000, &sender, json!(setoffs_msg))?;
+    let output = wasmd_client.tx_execute(
+        contract,
+        chain_id,
+        2000000,
+        &sender,
+        json!(setoffs_msg),
+        "1000untrn",
+    )?;
 
     println!("Setoffs TX: {}", output);
     Ok(())

@@ -1,0 +1,86 @@
+{
+  "contract_name": "tcbinfo",
+  "contract_version": "0.1.0",
+  "idl_version": "1.0.0",
+  "instantiate": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "InstantiateMsg",
+    "type": "object",
+    "required": [
+      "root_cert"
+    ],
+    "properties": {
+      "root_cert": {
+        "type": "string"
+      }
+    },
+    "additionalProperties": false
+  },
+  "execute": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "ExecuteMsg",
+    "type": "object",
+    "required": [
+      "certificate",
+      "tcb_info"
+    ],
+    "properties": {
+      "certificate": {
+        "type": "string"
+      },
+      "tcb_info": {
+        "type": "string"
+      },
+      "time": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "additionalProperties": false
+  },
+  "query": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "QueryMsg",
+    "oneOf": [
+      {
+        "type": "object",
+        "required": [
+          "get_tcb_info"
+        ],
+        "properties": {
+          "get_tcb_info": {
+            "type": "object",
+            "required": [
+              "fmspc"
+            ],
+            "properties": {
+              "fmspc": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    ]
+  },
+  "migrate": null,
+  "sudo": null,
+  "responses": {
+    "get_tcb_info": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "GetTcbInfoResponse",
+      "type": "object",
+      "required": [
+        "tcb_info"
+      ],
+      "properties": {
+        "tcb_info": true
+      },
+      "additionalProperties": false
+    }
+  }
+}

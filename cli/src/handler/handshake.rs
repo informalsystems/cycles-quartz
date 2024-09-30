@@ -47,8 +47,8 @@ impl Handler for HandshakeRequest {
 }
 
 async fn handshake(args: HandshakeRequest, config: Config) -> Result<String, anyhow::Error> {
-    let httpurl = Url::parse(&format!("http://{}", config.node_url))?;
-    let wsurl = format!("ws://{}/websocket", config.node_url);
+    let httpurl = config.node_url.clone();
+    let wsurl = config.websocket_url.clone();
 
     let tmrpc_client = HttpClient::new(httpurl.as_str())?;
     let wasmd_client = CliWasmdClient::new(Url::parse(httpurl.as_str())?);
@@ -60,6 +60,7 @@ async fn handshake(args: HandshakeRequest, config: Config) -> Result<String, any
     let res: serde_json::Value = RelayMessage::SessionCreate
         .run_relay(config.enclave_rpc())
         .await?;
+    info!("\n\n Enclave run realy response: {:?}", res);
 
     let output: WasmdTxResponse = serde_json::from_str(
         wasmd_client
@@ -69,10 +70,11 @@ async fn handshake(args: HandshakeRequest, config: Config) -> Result<String, any
                 2000000,
                 &config.tx_sender,
                 json!(res),
+                "11000untrn", // Add the fee here
             )?
             .as_str(),
     )?;
-    debug!("\n\n SessionCreate tx output: {:?}", output);
+    info!("\n\n SessionCreate tx output: {:?}", output);
 
     // Wait for tx to commit
     block_tx_commit(&tmrpc_client, output.txhash).await?;
@@ -112,13 +114,15 @@ async fn handshake(args: HandshakeRequest, config: Config) -> Result<String, any
         wasmd_client
             .tx_execute(
                 &args.contract.clone(),
-                &ChainId::from_str("testing")?,
+                &ChainId::from_str("pion-1")?,
                 2000000,
                 &config.tx_sender,
                 json!(res),
+                "11000untrn", // Add the fee here
             )?
             .as_str(),
     )?;
+    info!("\n\n SessionCreate tx output: {:?}", output);
 
     // Wait for tx to commit
     block_tx_commit(&tmrpc_client, output.txhash).await?;

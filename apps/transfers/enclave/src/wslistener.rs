@@ -116,7 +116,7 @@ impl<A: Attestor> WsListener for TransfersService<A> {
             }
         }
 
-        let wsurl = format!("ws://{}/websocket", config.node_url);
+        let wsurl = config.websocket_url;
         // Wait some blocks to make sure transaction was confirmed
         two_block_waitoor(&wsurl).await?;
 
@@ -167,10 +167,10 @@ async fn transfer_handler<A: Attestor>(
     ws_config: &WsListenerConfig,
 ) -> Result<()> {
     let chain_id = &ChainId::from_str(&ws_config.chain_id)?;
-    let httpurl = Url::parse(&format!("http://{}", ws_config.node_url))?;
+    let httpurl = Url::parse(&ws_config.node_url.clone())?;
     let wasmd_client = CliWasmdClient::new(httpurl.clone());
-
-    // Query contract state
+    // Query chain
+    // Get epoch, obligations, liquidity sources
     let resp: QueryResult<Vec<TransferRequest>> = wasmd_client
         .query_smart(contract, json!(GetRequests {}))
         .map_err(|e| anyhow!("Problem querying contract state: {}", e))?;
@@ -186,7 +186,7 @@ async fn transfer_handler<A: Attestor>(
 
     // Wait 2 blocks
     info!("Waiting 2 blocks for light client proof");
-    let wsurl = format!("ws://{}/websocket", ws_config.node_url);
+    let wsurl = ws_config.node_url.clone();
     two_block_waitoor(&wsurl).await?;
 
     // Call tm prover with trusted hash and height
@@ -255,6 +255,7 @@ async fn transfer_handler<A: Attestor>(
         2000000,
         &ws_config.tx_sender,
         json!(transfer_msg),
+        "11000untrn",
     )?;
 
     println!("Output TX: {}", output);
@@ -269,10 +270,10 @@ async fn query_handler<A: Attestor>(
     ws_config: &WsListenerConfig,
 ) -> Result<()> {
     let chain_id = &ChainId::from_str(&ws_config.chain_id)?;
-    let httpurl = Url::parse(&format!("http://{}", ws_config.node_url))?;
+    let httpurl = Url::parse(&ws_config.node_url)?;
     let wasmd_client = CliWasmdClient::new(httpurl);
-
-    // Query contract state
+    // Query Chain
+    // Get state
     let resp: QueryResult<HexBinary> = wasmd_client
         .query_smart(contract, json!(GetState {}))
         .map_err(|e| anyhow!("Problem querying contract state: {}", e))?;
@@ -322,6 +323,7 @@ async fn query_handler<A: Attestor>(
         2000000,
         &ws_config.tx_sender,
         json!(query_msg),
+        "11000untrn",
     )?;
 
     println!("Output TX: {}", output);

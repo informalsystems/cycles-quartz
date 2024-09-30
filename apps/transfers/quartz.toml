@@ -1,7 +1,7 @@
 mock_sgx = false
-tx_sender = "admin"
-chain_id = "testing"
-node_url = "127.0.0.1:26657"
+tx_sender = "val1"
+chain_id = "pion-1"
+node_url = "rpc-falcron.pion-1.ntrn.tech"
 enclave_rpc_addr = "http://127.0.0.1"
 enclave_rpc_port = 11090
 trusted_hash = ""

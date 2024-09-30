@@ -22,6 +22,10 @@ pub struct Config {
     #[serde(default = "default_node_url")]
     pub node_url: String,
 
+    /// Full WebSocket URL for this chain
+    #[serde(default = "default_websocket_url")]
+    pub websocket_url: String,
+
     /// RPC interface for the Quartz enclave
     #[serde(default = "default_rpc_addr")]
     pub enclave_rpc_addr: String,
@@ -53,15 +57,19 @@ fn default_rpc_addr() -> String {
 }
 
 fn default_node_url() -> String {
-    "127.0.0.1:26657".to_string()
+    "https://rpc-falcron.pion-1.ntrn.tech".to_string()
+}
+
+fn default_websocket_url() -> String {
+    "wss://rpc-falcron.pion-1.ntrn.tech/websocket".to_string()
 }
 
 fn default_tx_sender() -> String {
-    String::from("admin")
+    String::from("val1")
 }
 
 fn default_chain_id() -> ChainId {
-    "testing".parse().expect("default chain_id failed")
+    "pion-1".parse().expect("default chain_id failed")
 }
 
 fn default_port() -> u16 {
@@ -79,6 +87,7 @@ impl Default for Config {
             tx_sender: default_tx_sender(),
             chain_id: default_chain_id(),
             node_url: default_node_url(),
+            websocket_url: default_websocket_url(),
             enclave_rpc_addr: default_rpc_addr(),
             enclave_rpc_port: default_port(),
             app_dir: default_app_dir(),

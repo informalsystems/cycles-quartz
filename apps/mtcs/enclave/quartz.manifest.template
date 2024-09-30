@@ -21,7 +21,7 @@ loader.env.MYAPP_DATA = { passthrough = true }
 loader.env.QUARTZ_PORT = { passthrough = true }
 
 loader.argv = ["enclave",
-                "--chain-id", "testing",
+                "--chain-id", "{{ chain_id }}",
                 "--fmspc", "{{ fmspc }}",
                 "--tcbinfo-contract", "{{ tcbinfo_contract }}",
                 "--dcap-verifier-contract", "{{ dcap_verifier_contract }}",

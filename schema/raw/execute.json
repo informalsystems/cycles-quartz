@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ExecuteMsg",
+  "type": "object",
+  "required": [
+    "certificate",
+    "tcb_info"
+  ],
+  "properties": {
+    "certificate": {
+      "type": "string"
+    },
+    "tcb_info": {
+      "type": "string"
+    },
+    "time": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

@@ -20,7 +20,7 @@ use wasmd_client::{CliWasmdClient, WasmdClient};
 
 // const MNEMONIC_PHRASE: &str = "clutch debate vintage foster barely primary clown leader sell manual leopard ladder wet must embody story oyster imitate cable alien six square rice wedding";
 
-const ADDRESS_PREFIX: &str = "wasm";
+const ADDRESS_PREFIX: &str = "neutron";
 
 type Sha256Digest = [u8; 32];
 
@@ -97,14 +97,23 @@ async fn main() -> Result<(), anyhow::Error> {
         source_type: LiquiditySourceType::Overdraft,
     }];
 
-    let msg = create_wasm_msg(intents_enc, liquidity_sources)?;
+    let msg: &str = &create_wasm_msg(intents_enc, liquidity_sources)
+        .expect("cannot parse")
+        .to_string();
 
     let node_url = Url::parse("http://143.244.186.205:26657")?;
     let chain_id = TmChainId::from_str("testing")?;
 
     let wasmd_client = CliWasmdClient::new(node_url);
 
-    wasmd_client.tx_execute(&cli.mtcs, &chain_id, 3000000, &cli.admin.to_string(), msg)?;
+    wasmd_client.tx_execute(
+        &cli.mtcs,
+        &chain_id,
+        4000000,
+        &cli.admin.to_string(),
+        "50000untrn",
+        msg,
+    )?;
 
     Ok(())
 }

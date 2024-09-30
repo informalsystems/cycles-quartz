@@ -125,6 +125,11 @@ pub struct HandshakeArgs {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub node_url: Option<String>,
 
+    /// <host>:<port> to tendermint rpc interface for this chain
+    #[arg(long)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub websocket_url: Option<String>,
+
     /// RPC interface for the Quartz enclave
     #[arg(long)]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -191,6 +196,11 @@ pub struct EnclaveStartArgs {
     /// Fetch latest trusted hash and height from the chain instead of existing configuration
     #[arg(long)]
     pub unsafe_trust_latest: bool,
+
+    /// <host>:<port> to tendermint rpc interface for this chain
+    #[arg(long)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub websocket_url: Option<String>,
 
     /// FMSPC (Family-Model-Stepping-Platform-Custom SKU); required if `MOCK_SGX` is not set
     #[arg(long)]

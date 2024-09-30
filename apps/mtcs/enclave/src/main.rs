@@ -71,6 +71,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let ws_config = WsListenerConfig {
         node_url: args.node_url,
+        websocket_url: args.websocket_url,
         tx_sender: args.tx_sender,
         trusted_hash: args.trusted_hash,
         trusted_height: args.trusted_height,

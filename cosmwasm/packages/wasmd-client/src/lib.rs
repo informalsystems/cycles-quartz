@@ -34,6 +34,7 @@ pub trait WasmdClient {
         gas: u64,
         sender: &str,
         msg: M,
+        fees: &str,
     ) -> Result<String, Self::Error>;
 
     fn deploy<M: ToString>(
@@ -83,7 +84,7 @@ impl WasmdClient for CliWasmdClient {
         contract: &Self::Address,
         query: Self::Query,
     ) -> Result<R, Self::Error> {
-        let mut wasmd = Command::new("wasmd");
+        let mut wasmd = Command::new("neutrond");
         let command = wasmd
             .args(["--node", self.url.as_str()])
             .args(["query", "wasm"])
@@ -106,7 +107,7 @@ impl WasmdClient for CliWasmdClient {
         contract: &Self::Address,
         query: Self::RawQuery,
     ) -> Result<R, Self::Error> {
-        let mut wasmd = Command::new("wasmd");
+        let mut wasmd = Command::new("neutrond");
         let command = wasmd
             .args(["--node", self.url.as_str()])
             .args(["query", "wasm"])
@@ -124,7 +125,7 @@ impl WasmdClient for CliWasmdClient {
     }
 
     fn query_tx<R: DeserializeOwned + Default>(&self, txhash: &str) -> Result<R, Self::Error> {
-        let mut wasmd = Command::new("wasmd");
+        let mut wasmd = Command::new("neutrond");
         let command = wasmd
             .args(["--node", self.url.as_str()])
             .args(["query", "tx"])
@@ -147,14 +148,16 @@ impl WasmdClient for CliWasmdClient {
         gas: u64,
         sender: &str,
         msg: M,
+        fees: &str,
     ) -> Result<String, Self::Error> {
-        let mut wasmd = Command::new("wasmd");
+        let mut wasmd = Command::new("neutrond");
         let command = wasmd
             .args(["--node", self.url.as_str()])
             .args(["--chain-id", chain_id.as_ref()])
             .args(["tx", "wasm"])
             .args(["execute", contract.as_ref(), &msg.to_string()])
             .args(["--gas", &gas.to_string()])
+            .args(["--fees", fees]) // Add fees argument
             .args(["--from", sender])
             .args(["--output", "json"])
             .arg("-y");
@@ -175,13 +178,13 @@ impl WasmdClient for CliWasmdClient {
         sender: &str,
         wasm_path: M,
     ) -> Result<String, Self::Error> {
-        let mut wasmd = Command::new("wasmd");
+        let mut wasmd = Command::new("neutrond");
         let command = wasmd
             .args(["--node", self.url.as_str()])
             .args(["tx", "wasm", "store", &wasm_path.to_string()])
             .args(["--from", sender])
             .args(["--chain-id", chain_id.as_ref()])
-            .args(["--gas-prices", "0.0025ucosm"])
+            .args(["--gas-prices", "0.0053untrn"])
             .args(["--gas", "auto"])
             .args(["--gas-adjustment", "1.3"])
             .args(["-o", "json"])
@@ -205,7 +208,7 @@ impl WasmdClient for CliWasmdClient {
         init_msg: M,
         label: &str,
     ) -> Result<String, Self::Error> {
-        let mut wasmd = Command::new("wasmd");
+        let mut wasmd = Command::new("neutrond");
         let command = wasmd
             .args(["--node", self.url.as_str()])
             .args(["tx", "wasm", "instantiate"])
@@ -214,7 +217,7 @@ impl WasmdClient for CliWasmdClient {
             .args(["--from", sender])
             .arg("--no-admin")
             .args(["--chain-id", chain_id.as_ref()])
-            .args(["--gas-prices", "0.0025ucosm"])
+            .args(["--gas-prices", "0.0053untrn"])
             .args(["--gas", "auto"])
             .args(["--gas-adjustment", "1.3"])
             .args(["-o", "json"])
@@ -231,7 +234,7 @@ impl WasmdClient for CliWasmdClient {
     }
 
     fn trusted_height_hash(&self) -> Result<(u64, String), Self::Error> {
-        let mut wasmd = Command::new("wasmd");
+        let mut wasmd = Command::new("neutrond");
         let command = wasmd.args(["--node", self.url.as_str()]).arg("status");
 
         let output = command.output()?;
@@ -243,13 +246,13 @@ impl WasmdClient for CliWasmdClient {
         let query_result: serde_json::Value =
             serde_json::from_slice(&output.stdout).unwrap_or_default();
 
-        let trusted_height = query_result["SyncInfo"]["latest_block_height"]
+        let trusted_height = query_result["sync_info"]["latest_block_height"]
             .as_str()
             .ok_or(anyhow!("Could not query height"))?;
 
         let trusted_height = trusted_height.parse::<u64>()?;
 
-        let trusted_hash = query_result["SyncInfo"]["latest_block_hash"]
+        let trusted_hash = query_result["sync_info"]["latest_block_hash"]
             .as_str()
             .ok_or(anyhow!("Could not query height"))?
             .to_string();
