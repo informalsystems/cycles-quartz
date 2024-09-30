@@ -167,7 +167,7 @@ async fn transfer_handler<A: Attestor>(
     ws_config: &WsListenerConfig,
 ) -> Result<()> {
     let chain_id = &ChainId::from_str(&ws_config.chain_id)?;
-    let httpurl = Url::parse(&format!("http://{}", ws_config.node_url))?;
+    let httpurl = Url::parse(&ws_config.websocket_url)?;
     let wasmd_client = CliWasmdClient::new(httpurl.clone());
 
     // Query contract state
@@ -255,6 +255,7 @@ async fn transfer_handler<A: Attestor>(
         2000000,
         &ws_config.tx_sender,
         json!(transfer_msg),
+        "11000untrn"
     )?;
 
     println!("Output TX: {}", output);
@@ -269,7 +270,7 @@ async fn query_handler<A: Attestor>(
     ws_config: &WsListenerConfig,
 ) -> Result<()> {
     let chain_id = &ChainId::from_str(&ws_config.chain_id)?;
-    let httpurl = Url::parse(&format!("http://{}", ws_config.node_url))?;
+    let httpurl = Url::parse(&ws_config.websocket_url)?;
     let wasmd_client = CliWasmdClient::new(httpurl);
 
     // Query contract state

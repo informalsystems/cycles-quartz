@@ -56,7 +56,7 @@ Quartz is both a library (`quartz-cw`) for building SGX-aware CosmWasm
 contracts, and a cli tool (`quartz`) for managing the enclave. 
 
 The library takes care of establishing a secure connection to the enclave (see
-[How it Works](/docs/how_it_works.md), and verifying attestations from
+[How it Works](/docs/how_it_works.md)), and verifying attestations from
 it. The quartz tool provides commands for managing the enclave.
 
 This guide is primarily about using the `quartz` tool to get the example app
@@ -314,17 +314,32 @@ dcap-verify contract provides the core verification of the SGX attestation
 versions of SGX processors. Together they allow contracts built with quartz to
 securely verify remote attestations from SGX enclaves.
 
-We have already predeployed the dcap-verify and tcbinfo contracts on the Neutron
-testnet at TODO. To deploy these on your own testnet, see [below](#other-testnets-with-sgx).
+We have already predeployed the dcap-verify ([neutron18f3xu4yazfqr48wla9dwr7arn8wfm57qfw8ll6y02qsgmftpft6qfec3uf](https://neutron.celat.one/pion-1/txs/CFC836D431A1BE121219FCB3AE9B45F803100428BD40DF7E9FEEEA384BEDE795))and tcbinfo contracts ([neutron1anj45ushmjntew7zrg5jw2rv0rwfce3nl5d655mzzg8st0qk4wjsds4wps](https://neutron.celat.one/pion-1/contracts/neutron1anj45ushmjntew7zrg5jw2rv0rwfce3nl5d655mzzg8st0qk4wjsds4wps)) on the Neutron testnet. To deploy these on your own testnet, see [below](#other-testnets-with-sgx).
+
+
 
 To begin, you'll need to deploy an SGX-enabled Azure instance and log in via ssh.
 
+Login via `ssh` into your Azure Sgx enabled machine. 
+
+```bash
+ ssh username@21.6.21.71
+```
+
+### Quickstart
+
 Once logged in, clone and install Quartz like before (see
-[installation](#installation).
+[installation](#installation)).
 
 ### Build and Deploy the Contracts
 
 TODO: make this about deploying to neutron.
+To facilitate deploying on neutron testnet, export the following variables:
+```bash
+   export NODE_URL="https://rpc-falcron.pion-1.ntrn.tech"
+   export WSS_URL="wss://rpc-falcron.pion-1.ntrn.tech/websocket"
+```
+
 
 To build both the contract binaries, use the build command:
 
@@ -333,18 +348,19 @@ quartz --app-dir "apps/transfers/" contract build --contract-manifest "apps/tran
 ```
 This command will compile the smart contract to WebAssembly and build the contract binary.
 
-The following configuration assumes that the `wasmd` node will be running in the same Azure instance as the enclave. 
+TODO: move this paragraph to where it is more appropriate / if run here it will produce errors because the enclave must be running first
+<!-- The following configuration assumes that a `neutrond` binary will be running in the same Azure instance as the enclave. 
 If you wish to use another enclave provider you have to make sure that `QUARTZ_NODE_URL` is set to the enclave address and port as an argument as in:
 
 ```bash
-QUARTZ_NODE_URL=87.23.1.3:11090 && quartz --app-dir "apps/transfers/" contract deploy  --contract-manifest "apps/transfers/contracts/Cargo.toml"   --init-msg '{"denom":"ucosm"}'
+QUARTZ_NODE_URL=87.23.1.3:11090 && quartz --app-dir "apps/transfers/" contract deploy  --contract-manifest "apps/transfers/contracts/Cargo.toml"   --init-msg '{"denom":"untrn"}'
 ```
 
 If you wish to use another blockchain you have to make sure that `--node-url` is set to the chain address and port as an option in the `cli` as in:
 
 ```bash
-QUARTZ_NODE_URL=127.0.0.1:11090 && quartz --app-dir "apps/transfers/" --node-url "https://92.43.1.4:26657" contract deploy  --contract-manifest "apps/transfers/contracts/Cargo.toml"   --init-msg '{"denom":"ucosm"}'
-```
+QUARTZ_NODE_URL=127.0.0.1:11090 && quartz --app-dir "apps/transfers/"  contract deploy --node-url $NODE_URL --contract-manifest "apps/transfers/contracts/Cargo.toml"   --init-msg '{"denom":"untrn"}'
+``` -->
 
 ### Build and Run the SGX Enclave
 
@@ -360,13 +376,34 @@ Before starting the enclave, we should check that the relevant contracts
 
 TODO: how to query to check this?
 
-TODO: use variables for the contract addresses 
+You can verify that the `dcap-verifier` in instantiated by running:
+```bash
+   # Export all variables
+   export DCAP_CODE_ID="7095"
+   export TCBINFO_CODE_ID="7094"
+
+   # Query DCAP_CODE_ID to get the contract address and export it to a local variable
+   neutrond --node $NODE_URL query wasm list-contract-by-code "$DCAP_CODE_ID" --output json | jq -r '.contracts[0]'
+   export DCAP_CONTRACT=$(neutrond --node $NODE_URL query wasm list-contract-by-code "$DCAP_CODE_ID" --output json | jq -r '.contracts[0]')
+```
+
+You can also verify that the `tcbinfo` contract is instantiated by running:
+```bash
+   # Query TCBINFO_CODE_ID to get the contract address and export it to a local variable
+   neutrond --node $NODE_URL query wasm list-contract-by-code "$TCBINFO_CODE_ID" --output json | jq -r '.contracts[0]'
+   export TCBINFO_CONTRACT=$(neutrond --node $NODE_URL query wasm list-contract-by-code "$TCBINFO_CODE_ID" --output json | jq -r '.contracts[0]')
+```
+
+We have currently instantiated the following FMSPC "00606A000000", you can verify by queryint the contract state:
+```bash
+neutrond --node $NODE_URL query wasm contract-state smart "$TCBINFO_CONTRACT" '{"get_tcb_info": {"fmspc": "00606A000000"}}'
+```
 
 
 
 ```bash
 # Start the enclave
-QUARTZ_NODE_URL=127.0.0.1:11090 && quartz --app-dir "apps/transfers/" enclave start  --fmspc "00606A000000" --tcbinfo-contract "wasm1pk6xe9hr5wgvl5lcd6wp62236t5p600v9g7nfcsjkf6guvta2s5s7353wa" --dcap-verifier-contract "wasm107cq7x4qmm7mepkuxarcazas23037g4q9u72urzyqu7r4saq3l6srcykw2"
+QUARTZ_NODE_URL=127.0.0.1:11090 && quartz --app-dir "apps/transfers/" enclave start  --fmspc "00606A000000" --tcbinfo-contract $TCBINFO_CONTRACT --dcap-verifier-contract $DCAP_CONTRACT
 ```
 
 The enclave will start running and wait for commands.
@@ -376,7 +413,7 @@ The enclave will start running and wait for commands.
 With the enclave running, open a new terminal window to deploy the contract:
 
 ```bash
-QUARTZ_NODE_URL=127.0.0.1:11090 && quartz --app-dir "apps/transfers/" contract deploy  --contract-manifest "apps/transfers/contracts/Cargo.toml"   --init-msg '{"denom":"ucosm"}'
+QUARTZ_NODE_URL=127.0.0.1:11090 && quartz --app-dir "apps/transfers/"  contract deploy --node-url $NODE_URL --contract-manifest "apps/transfers/contracts/Cargo.toml"   --init-msg '{"denom":"untrn"}'
 ```
 
 Make note of the deployed contract address, as you'll need it for the next step. You should see output similar to:

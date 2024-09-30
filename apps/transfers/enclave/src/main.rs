@@ -28,7 +28,7 @@ use cli::Cli;
 use quartz_common::{
     contract::state::{Config, LightClientOpts},
     enclave::{
-        attestor::{self, Attestor, DefaultAttestor},
+        attestor::{self, Attestor, DcapAttestor},
         server::{QuartzServer, WsListenerConfig},
     },
 };
@@ -77,12 +77,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         trusted_hash: args.trusted_hash,
         trusted_height: args.trusted_height,
         chain_id: args.chain_id,
+        websocket_url: args.websocket_url,
+
     };
 
     let sk = Arc::new(Mutex::new(None));
 
     // Event queue
-    let (tx, mut rx) = mpsc::channel::<TransfersOp<DefaultAttestor>>(1);
+    let (tx, mut rx) = mpsc::channel::<TransfersOp<DcapAttestor>>(1);
     // Consumer task: dequeue and process events
     tokio::spawn(async move {
         while let Some(op) = rx.recv().await {
