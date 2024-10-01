@@ -34,5 +34,3 @@ RUN rustup target add "$TARGET"
 WORKDIR /opt/crates/cli
 RUN cargo build --locked --release ${CARGO_FLAGS}
 RUN cp /opt/target/release/quartz /usr/local/bin/
-
-CMD ["quartz", "--mock-sgx", "--app-dir", "/opt/examples/transfers", "dev", "--unsafe-trust-latest", "--contract-manifest", "/opt/examples/transfers/contracts/Cargo.toml", "--init-msg", "{\"denom\":\"ucosm\"}"]

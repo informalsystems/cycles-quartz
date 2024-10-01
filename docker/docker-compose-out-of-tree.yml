@@ -1,0 +1,23 @@
+name: "quartz-cli"
+
+volumes:
+  wasmd_data:
+
+services:
+  node:
+    extends:
+      file: docker-compose-base.yml
+      service: node
+
+  enclave_e2e:
+    extends:
+      file: docker-compose-base.yml
+      service: enclave
+    container_name: quartz-cli-transfers-e2e
+    command:
+      - /bin/sh
+      - -c
+      - |
+        cd /opt/examples &&
+        USER=root quartz init &&
+        quartz --mock-sgx --app-dir quartz_app dev --unsafe-trust-latest --contract-manifest quartz_app/contracts/Cargo.toml --init-msg "{\"denom\":\"ucosm\"}"

@@ -1,0 +1,29 @@
+name: "transfers"
+
+volumes:
+  wasmd_data:
+
+services:
+  node:
+    extends:
+      file: docker-compose-base.yml
+      service: node
+
+  enclave_e2e:
+    extends:
+      file: docker-compose-base.yml
+      service: enclave
+    container_name: quartz-cli-transfers-e2e
+    command:
+      [
+        "quartz",
+        "--mock-sgx",
+        "--app-dir",
+        "/opt/examples/transfers",
+        "dev",
+        "--unsafe-trust-latest",
+        "--contract-manifest",
+        "/opt/examples/transfers/contracts/Cargo.toml",
+        "--init-msg",
+        '{"denom":"ucosm"}',
+      ]

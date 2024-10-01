@@ -17,7 +17,7 @@ jobs:
           check-latest: true
 
       - name: Run Backend stack
-        run: docker compose -f docker/docker-compose.yml up -d --build
+        run: docker compose -f docker/docker-compose-e2e.yml up -d --build
 
       - name: Wait for enclave to listen
         timeout-minutes: 25

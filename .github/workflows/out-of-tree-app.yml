@@ -1,0 +1,21 @@
+name: Out-of-tree app
+
+on:
+  pull_request:
+jobs:
+  quartz-init:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Backend stack
+        run: docker compose -f docker/docker-compose-out-of-tree.yml up -d --build
+
+      - name: Wait for enclave to listen
+        timeout-minutes: 25
+        run: |
+          echo "Waiting for handshake completion..."
+          while ! docker logs quartz-cli-transfers 2>&1 | grep -q "Enclave is listening"; do
+            sleep 30
+          done
