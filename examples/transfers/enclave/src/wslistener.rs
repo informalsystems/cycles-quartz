@@ -195,7 +195,11 @@ where
         .map_err(|e| anyhow!("Problem querying contract state: {}", e))?;
 
     // Request body contents
-    let update_contents = UpdateRequestMessage { state, requests, seq_num };
+    let update_contents = UpdateRequestMessage {
+        state,
+        requests,
+        seq_num,
+    };
 
     // Wait 2 blocks
     info!("Waiting 2 blocks for light client proof");

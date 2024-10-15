@@ -130,6 +130,7 @@ pub struct TransfersService<A: Attestor> {
     attestor: A,
     pub queue_producer: Sender<TransfersOp<A>>,
     tx: Option<Sender<CoreMsg>>,
+    seq_num: u64,
 }
 
 impl<A> TransfersService<A>
@@ -148,6 +149,7 @@ where
             attestor,
             queue_producer,
             tx: None,
+            seq_num: 0,
         }
     }
 }
@@ -196,6 +198,22 @@ where
         let requests_len = message.requests.len() as u32;
         // Instantiate empty withdrawals map to include in response (Update message to smart contract)
         let mut withdrawals_response: Vec<(Addr, Uint128)> = Vec::<(Addr, Uint128)>::new();
+
+        // make sure number of pending requests are equal to the diff b/w on-chain v/s in-mem seq num
+        let pending_sequenced_requests = message
+            .requests
+            .iter()
+            .filter(|req| matches!(req, TransfersRequest::Transfer(_)))
+            .count();
+
+        if message.seq_num < self.seq_num {
+            return Err(Status::failed_precondition("replay attempted"));
+        }
+
+        let seq_num_diff = message.seq_num - self.seq_num;
+        if seq_num_diff != pending_sequenced_requests {
+            return Err(Status::failed_precondition("seq_num_diff mismatch"));
+        }
 
         // Loop through requests, match on cases, and apply changes to state
         for req in message.requests {
