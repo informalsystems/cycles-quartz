@@ -53,10 +53,16 @@ pub fn execute(
         ExecuteMsg::Deposit => deposit(deps, env, info),
         ExecuteMsg::Withdraw => withdraw(deps, env, info),
         ExecuteMsg::ClearTextTransferRequest(_) => unimplemented!(),
-        ExecuteMsg::QueryRequest(msg) => query_balance(deps, env, info, msg),
+        ExecuteMsg::QueryRequest(msg) => {
+            let _ = msg.clone().handle_raw(deps.branch(), &env, &info)?;
+            query_balance(deps, env, info, msg.0 .0)
+        }
 
         // Cipher user msgs
-        ExecuteMsg::TransferRequest(msg) => transfer_request(deps, env, info, msg),
+        ExecuteMsg::TransferRequest(msg) => {
+            let _ = msg.clone().handle_raw(deps.branch(), &env, &info)?;
+            transfer_request(deps, env, info, msg.0 .0)
+        }
 
         // Enclave msgs
         ExecuteMsg::Update(attested_msg) => {
