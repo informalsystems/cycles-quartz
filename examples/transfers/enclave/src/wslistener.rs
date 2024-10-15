@@ -6,7 +6,10 @@ use cosmwasm_std::{Addr, HexBinary};
 use cw_client::{CwClient, GrpcClient};
 use futures_util::StreamExt;
 use quartz_common::{
-    contract::msg::execute::attested::{RawAttested, RawMsgSansHandler},
+    contract::{
+        msg::execute::attested::{RawAttested, RawMsgSansHandler},
+        state::SEQUENCE_NUM_KEY,
+    },
     enclave::{
         attestor::Attestor,
         server::{WebSocketHandler, WsListenerConfig},
@@ -186,8 +189,13 @@ where
         .await
         .map_err(|e| anyhow!("Problem querying contract state: {}", e))?;
 
+    let seq_num = cw_client
+        .query_raw(contract, SEQUENCE_NUM_KEY.to_string())
+        .await
+        .map_err(|e| anyhow!("Problem querying contract state: {}", e))?;
+
     // Request body contents
-    let update_contents = UpdateRequestMessage { state, requests };
+    let update_contents = UpdateRequestMessage { state, requests, seq_num };
 
     // Wait 2 blocks
     info!("Waiting 2 blocks for light client proof");

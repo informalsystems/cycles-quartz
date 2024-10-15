@@ -51,6 +51,7 @@ pub type RawCipherText = HexBinary;
 pub struct UpdateRequestMessage {
     pub state: HexBinary,
     pub requests: Vec<TransfersRequest>,
+    pub seq_num: u64,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

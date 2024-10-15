@@ -248,7 +248,8 @@ impl Session {
     }
 }
 
+pub const SEQUENCE_NUM_KEY: &str = "quartz_seq_num";
 pub const CONFIG: Item<RawConfig> = Item::new("quartz_config");
 pub const SESSION: Item<Session> = Item::new("quartz_session");
 pub const EPOCH_COUNTER: Item<Uint64> = Item::new("epoch_counter");
-pub const SEQUENCE_NUM: Item<Uint64> = Item::new("quartz_seq_num");
+pub const SEQUENCE_NUM: Item<Uint64> = Item::new(SEQUENCE_NUM_KEY);
