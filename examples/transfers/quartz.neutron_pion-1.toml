@@ -12,3 +12,4 @@ enclave_rpc_port = 11091
 trusted_hash = ""
 trusted_height = 0
 release = true
+gramine_bin_prefix = "docker run --device /dev/sgx_enclave --device /dev/sgx_provision gramineproject/gramine:stable-jammy"
