@@ -222,16 +222,16 @@ impl Attestation for MockAttestation {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct AttestedMsgSansHandler<T>(pub T);
+pub struct MsgSansHandler<T>(pub T);
 
 #[cw_serde]
-pub struct RawAttestedMsgSansHandler<T>(pub T);
+pub struct RawMsgSansHandler<T>(pub T);
 
-impl<T: Serialize> HasDomainType for RawAttestedMsgSansHandler<T> {
-    type DomainType = AttestedMsgSansHandler<T>;
+impl<T: Serialize> HasDomainType for RawMsgSansHandler<T> {
+    type DomainType = MsgSansHandler<T>;
 }
 
-impl<T> HasUserData for AttestedMsgSansHandler<T>
+impl<T> HasUserData for MsgSansHandler<T>
 where
     T: HasUserData,
 {
@@ -240,16 +240,16 @@ where
     }
 }
 
-impl<T> TryFrom<RawAttestedMsgSansHandler<T>> for AttestedMsgSansHandler<T> {
+impl<T> TryFrom<RawMsgSansHandler<T>> for MsgSansHandler<T> {
     type Error = StdError;
 
-    fn try_from(value: RawAttestedMsgSansHandler<T>) -> Result<Self, Self::Error> {
+    fn try_from(value: RawMsgSansHandler<T>) -> Result<Self, Self::Error> {
         Ok(Self(value.0))
     }
 }
 
-impl<T> From<AttestedMsgSansHandler<T>> for RawAttestedMsgSansHandler<T> {
-    fn from(value: AttestedMsgSansHandler<T>) -> Self {
+impl<T> From<MsgSansHandler<T>> for RawMsgSansHandler<T> {
+    fn from(value: MsgSansHandler<T>) -> Self {
         Self(value.0)
     }
 }

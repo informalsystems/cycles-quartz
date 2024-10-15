@@ -14,8 +14,7 @@ use crate::{
     error::Error,
     handler::Handler,
     msg::execute::attested::{
-        Attestation, Attested, AttestedMsgSansHandler, DcapAttestation, HasUserData,
-        MockAttestation, Quote,
+        Attestation, Attested, DcapAttestation, HasUserData, MockAttestation, MsgSansHandler, Quote,
     },
     state::CONFIG,
 };
@@ -181,7 +180,7 @@ where
     }
 }
 
-impl<T> Handler for AttestedMsgSansHandler<T> {
+impl<T> Handler for MsgSansHandler<T> {
     fn handle(
         self,
         _deps: DepsMut<'_>,

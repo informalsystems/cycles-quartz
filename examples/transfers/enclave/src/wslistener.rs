@@ -6,7 +6,7 @@ use cosmwasm_std::{Addr, HexBinary};
 use cw_client::{CwClient, GrpcClient};
 use futures_util::StreamExt;
 use quartz_common::{
-    contract::msg::execute::attested::{RawAttested, RawAttestedMsgSansHandler},
+    contract::msg::execute::attested::{RawAttested, RawMsgSansHandler},
     enclave::{
         attestor::Attestor,
         server::{WebSocketHandler, WsListenerConfig},
@@ -241,7 +241,7 @@ where
     // Build on-chain response
     // TODO add non-mock support
     let transfer_msg = ExecuteMsg::Update(AttestedMsg {
-        msg: RawAttestedMsgSansHandler(attested.msg),
+        msg: RawMsgSansHandler(attested.msg),
         attestation: attested.attestation,
     });
 
@@ -311,7 +311,7 @@ where
     // Build on-chain response
     // TODO add non-mock support
     let query_msg = ExecuteMsg::QueryResponse(AttestedMsg {
-        msg: RawAttestedMsgSansHandler(attested.msg),
+        msg: RawMsgSansHandler(attested.msg),
         attestation: attested.attestation,
     });
 
