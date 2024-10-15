@@ -14,7 +14,7 @@ use quartz_common::{
     },
     enclave::{
         attestor::Attestor,
-        server::{IntoServer, ProofOfPublication, WsListenerConfig},
+        server::{AppService, CoreMsg, IntoServer, ProofOfPublication, WsListenerConfig},
     },
 };
 use serde::{Deserialize, Serialize};
@@ -36,6 +36,12 @@ impl<A: Attestor> IntoServer for TransfersService<A> {
 
     fn into_server(self) -> Self::Server {
         SettlementServer::new(self)
+    }
+}
+
+impl<A: Attestor> AppService for TransfersService<A> {
+    fn accept_channel(&mut self, tx: Sender<CoreMsg>) {
+        self.tx = Some(tx);
     }
 }
 
@@ -122,6 +128,7 @@ pub struct TransfersService<A: Attestor> {
     sk: Arc<Mutex<Option<SigningKey>>>,
     attestor: A,
     pub queue_producer: Sender<TransfersOp<A>>,
+    tx: Option<Sender<CoreMsg>>,
 }
 
 impl<A> TransfersService<A>
@@ -139,6 +146,7 @@ where
             sk,
             attestor,
             queue_producer,
+            tx: None,
         }
     }
 }
