@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, str::FromStr};
 
 use cosmrs::tendermint::chain::Id as ChainId;
 use reqwest::Url;
@@ -60,6 +60,10 @@ pub struct Config {
     /// Whether to build for release or debug
     #[serde(default)]
     pub release: bool,
+
+    /// Prefix for gramine commands (to be used if docker is preferred)
+    #[serde(default)]
+    pub gramine_bin_prefix: GramineBinPrefix,
 }
 
 fn default_rpc_addr() -> String {
@@ -100,6 +104,45 @@ fn default_app_dir() -> PathBuf {
     ".".parse().expect("default app_dir pathbuf failed")
 }
 
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(transparent)]
+pub struct GramineBinPrefix(String);
+
+impl Default for GramineBinPrefix {
+    fn default() -> Self {
+        Self::docker_stable_jammy()
+    }
+}
+
+impl GramineBinPrefix {
+    pub fn empty() -> Self {
+        Self("".to_string())
+    }
+
+    pub fn docker_stable_jammy() -> Self {
+        GramineBinPrefix("docker run --device /dev/sgx_enclave --device /dev/sgx_provision  gramineproject/gramine:stable-jammy".to_string())
+    }
+
+    pub fn docker_stable_focal() -> Self {
+        GramineBinPrefix("docker run --device /dev/sgx_enclave --device /dev/sgx_provision  gramineproject/gramine:stable-focal".to_string())
+    }
+}
+
+impl FromStr for GramineBinPrefix {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        // TODO(hu55a1n1): validation
+        Ok(Self(s.to_string()))
+    }
+}
+
+impl AsRef<str> for GramineBinPrefix {
+    fn as_ref(&self) -> &str {
+        self.0.as_str()
+    }
+}
+
 impl Default for Config {
     fn default() -> Self {
         Config {
@@ -115,6 +158,7 @@ impl Default for Config {
             trusted_height: u64::default(),
             trusted_hash: String::default(),
             release: false,
+            gramine_bin_prefix: Default::default(),
         }
     }
 }

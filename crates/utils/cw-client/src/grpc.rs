@@ -12,7 +12,8 @@ use cosmos_sdk_proto::{
         },
     },
     cosmwasm::wasm::v1::{
-        query_client::QueryClient as WasmdQueryClient, QuerySmartContractStateRequest,
+        query_client::QueryClient as WasmdQueryClient, QueryRawContractStateRequest,
+        QuerySmartContractStateRequest,
     },
     traits::Message,
     Any,
@@ -69,12 +70,23 @@ impl CwClient for GrpcClient {
             .map_err(|e| anyhow!("failed to deserialize JSON reponse: {}", e))
     }
 
-    fn query_raw<R: DeserializeOwned + Default>(
+    async fn query_raw<R: DeserializeOwned + Default>(
         &self,
-        _contract: &Self::Address,
-        _query: Self::RawQuery,
+        contract: &Self::Address,
+        query: Self::RawQuery,
     ) -> Result<R, Self::Error> {
-        unimplemented!()
+        let mut client = WasmdQueryClient::connect(self.url.to_string()).await?;
+
+        let raw_query_request = QueryRawContractStateRequest {
+            address: contract.to_string(),
+            query_data: query.to_string().into_bytes(),
+        };
+
+        let raw_query_response = client.raw_contract_state(raw_query_request).await?;
+
+        let raw_value = raw_query_response.into_inner().data;
+        serde_json::from_slice(&raw_value)
+            .map_err(|e| anyhow!("failed to deserialize JSON reponse: {}", e))
     }
 
     fn query_tx<R: DeserializeOwned + Default>(&self, _txhash: &str) -> Result<R, Self::Error> {

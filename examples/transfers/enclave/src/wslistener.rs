@@ -6,7 +6,10 @@ use cosmwasm_std::{Addr, HexBinary};
 use cw_client::{CwClient, GrpcClient};
 use futures_util::StreamExt;
 use quartz_common::{
-    contract::msg::execute::attested::{RawAttested, RawAttestedMsgSansHandler},
+    contract::{
+        msg::execute::attested::{RawAttested, RawMsgSansHandler},
+        state::SEQUENCE_NUM_KEY,
+    },
     enclave::{
         attestor::Attestor,
         server::{WebSocketHandler, WsListenerConfig},
@@ -186,8 +189,17 @@ where
         .await
         .map_err(|e| anyhow!("Problem querying contract state: {}", e))?;
 
+    let seq_num = cw_client
+        .query_raw(contract, SEQUENCE_NUM_KEY.to_string())
+        .await
+        .map_err(|e| anyhow!("Problem querying contract state: {}", e))?;
+
     // Request body contents
-    let update_contents = UpdateRequestMessage { state, requests };
+    let update_contents = UpdateRequestMessage {
+        state,
+        requests,
+        seq_num,
+    };
 
     // Wait 2 blocks
     info!("Waiting 2 blocks for light client proof");
@@ -241,7 +253,7 @@ where
     // Build on-chain response
     // TODO add non-mock support
     let transfer_msg = ExecuteMsg::Update(AttestedMsg {
-        msg: RawAttestedMsgSansHandler(attested.msg),
+        msg: RawMsgSansHandler(attested.msg),
         attestation: attested.attestation,
     });
 
@@ -311,7 +323,7 @@ where
     // Build on-chain response
     // TODO add non-mock support
     let query_msg = ExecuteMsg::QueryResponse(AttestedMsg {
-        msg: RawAttestedMsgSansHandler(attested.msg),
+        msg: RawMsgSansHandler(attested.msg),
         attestation: attested.attestation,
     });
 
