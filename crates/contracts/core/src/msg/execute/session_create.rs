@@ -10,21 +10,27 @@ use crate::{
 #[derive(Clone, Debug, PartialEq)]
 pub struct SessionCreate {
     nonce: Nonce,
+    contract: String,
 }
 
 impl SessionCreate {
-    pub fn new(nonce: Nonce) -> Self {
-        Self { nonce }
+    pub fn new(nonce: Nonce, contract: String) -> Self {
+        Self { nonce, contract }
     }
 
-    pub fn into_nonce(self) -> Nonce {
+    pub fn nonce(&self) -> Nonce {
         self.nonce
+    }
+
+    pub fn contract(&self) -> &str {
+        self.contract.as_str()
     }
 }
 
 #[cw_serde]
 pub struct RawSessionCreate {
     nonce: HexBinary,
+    contract: String,
 }
 
 impl TryFrom<RawSessionCreate> for SessionCreate {
@@ -32,7 +38,8 @@ impl TryFrom<RawSessionCreate> for SessionCreate {
 
     fn try_from(value: RawSessionCreate) -> Result<Self, Self::Error> {
         let nonce = value.nonce.to_array()?;
-        Ok(Self { nonce })
+        let contract = value.contract;
+        Ok(Self { nonce, contract })
     }
 }
 
@@ -40,6 +47,7 @@ impl From<SessionCreate> for RawSessionCreate {
     fn from(value: SessionCreate) -> Self {
         Self {
             nonce: value.nonce.into(),
+            contract: value.contract,
         }
     }
 }

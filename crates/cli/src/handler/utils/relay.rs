@@ -1,4 +1,5 @@
 use color_eyre::{eyre::eyre, Result};
+use cosmrs::AccountId;
 use quartz_common::proto::{
     core_client::CoreClient, InstantiateRequest, SessionCreateRequest, SessionSetPubKeyRequest,
 };
@@ -8,7 +9,7 @@ use serde_json::{json, Value as JsonValue};
 #[derive(Debug)]
 pub enum RelayMessage {
     Instantiate { init_msg: JsonValue },
-    SessionCreate,
+    SessionCreate { contract: AccountId },
     SessionSetPubKey { proof: ProofOutput },
 }
 
@@ -37,8 +38,10 @@ impl RelayMessage {
                     init_msg["quartz"] = msg;
                     init_msg.to_string()
                 })?,
-            RelayMessage::SessionCreate => qc_client
-                .session_create(tonic::Request::new(SessionCreateRequest {}))
+            RelayMessage::SessionCreate { contract } => qc_client
+                .session_create(tonic::Request::new(SessionCreateRequest {
+                    message: serde_json::to_string(&contract)?,
+                }))
                 .await
                 .map_err(|e| {
                     eyre!(

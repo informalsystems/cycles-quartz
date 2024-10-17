@@ -21,7 +21,10 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use tokio::sync::mpsc::Sender;
 use tonic::{Request, Response, Result as TonicResult, Status};
-use transfers_contract::msg::execute::{ClearTextTransferRequestMsg, Request as TransfersRequest};
+use transfers_contract::{
+    msg::execute::{ClearTextTransferRequestMsg, Request as TransfersRequest},
+    state::REQUESTS_KEY,
+};
 
 use crate::{
     proto::{
@@ -119,6 +122,7 @@ pub struct TransfersOp<A: Attestor> {
 #[derive(Clone, Debug)]
 pub struct TransfersService<A: Attestor> {
     config: Config,
+    contract: Arc<Mutex<Option<AccountId>>>,
     sk: Arc<Mutex<Option<SigningKey>>>,
     attestor: A,
     pub queue_producer: Sender<TransfersOp<A>>,
@@ -130,12 +134,14 @@ where
 {
     pub fn new(
         config: Config,
+        contract: Arc<Mutex<Option<AccountId>>>,
         sk: Arc<Mutex<Option<SigningKey>>>,
         attestor: A,
         queue_producer: Sender<TransfersOp<A>>,
     ) -> Self {
         Self {
             config,
+            contract,
             sk,
             attestor,
             queue_producer,
@@ -155,8 +161,15 @@ where
             serde_json::from_str(&message).map_err(|e| Status::invalid_argument(e.to_string()))?
         };
 
+        let contract = self.contract.lock().unwrap().clone();
+
         let (proof_value, message) = message
-            .verify(self.config.light_client_opts())
+            .verify(
+                self.config.light_client_opts(),
+                contract.expect("contract not set"),
+                REQUESTS_KEY.to_string(),
+                None,
+            )
             .map_err(Status::failed_precondition)?;
 
         let proof_value_matches_msg =

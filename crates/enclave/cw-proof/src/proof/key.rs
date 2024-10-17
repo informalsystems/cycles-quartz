@@ -82,6 +82,10 @@ impl CwAbciKey {
         }
     }
 
+    pub fn into_vec(self) -> Vec<u8> {
+        self.into()
+    }
+
     fn into_tuple(self) -> (AccountId, String, Option<String>) {
         match self {
             CwAbciKey::Item {

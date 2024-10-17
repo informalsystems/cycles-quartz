@@ -5,6 +5,7 @@ use std::{
     time::Duration,
 };
 
+use cosmrs::AccountId;
 use futures_util::StreamExt;
 use k256::ecdsa::SigningKey;
 use quartz_contract_core::{
@@ -15,10 +16,11 @@ use quartz_contract_core::{
         },
         instantiate::CoreInstantiate,
     },
-    state::{Config, LightClientOpts, Nonce, Session},
+    state::{Config, LightClientOpts, Nonce, Session, SESSION_KEY},
 };
 use quartz_cw_proof::proof::{
     cw::{CwProof, RawCwProof},
+    key::CwAbciKey,
     Proof,
 };
 use quartz_proto::quartz::{
@@ -106,13 +108,19 @@ impl QuartzServer {
     pub fn new<A>(
         config: Config,
         sk: Arc<Mutex<Option<SigningKey>>>,
+        contract: Arc<Mutex<Option<AccountId>>>,
         attestor: A,
         ws_config: WsListenerConfig,
     ) -> Self
     where
         A: Attestor + Clone,
     {
-        let core_service = CoreServer::new(CoreService::new(config, sk.clone(), attestor.clone()));
+        let core_service = CoreServer::new(CoreService::new(
+            config,
+            contract.clone(),
+            sk.clone(),
+            attestor.clone(),
+        ));
 
         Self {
             router: Server::builder().add_service(core_service),
@@ -184,6 +192,7 @@ impl QuartzServer {
 pub struct CoreService<A> {
     config: Config,
     nonce: Arc<Mutex<Nonce>>,
+    contract: Arc<Mutex<Option<AccountId>>>,
     sk: Arc<Mutex<Option<SigningKey>>>,
     attestor: A,
 }
@@ -192,10 +201,16 @@ impl<A> CoreService<A>
 where
     A: Attestor,
 {
-    pub fn new(config: Config, sk: Arc<Mutex<Option<SigningKey>>>, attestor: A) -> Self {
+    pub fn new(
+        config: Config,
+        contract: Arc<Mutex<Option<AccountId>>>,
+        sk: Arc<Mutex<Option<SigningKey>>>,
+        attestor: A,
+    ) -> Self {
         Self {
             config,
             nonce: Arc::new(Mutex::new([0u8; 32])),
+            contract,
             sk,
             attestor,
         }
@@ -226,12 +241,19 @@ where
 
     async fn session_create(
         &self,
-        _request: Request<RawSessionCreateRequest>,
+        request: Request<RawSessionCreateRequest>,
     ) -> TonicResult<Response<RawSessionCreateResponse>> {
         // FIXME(hu55a1n1) - disallow calling more than once
+        let deployed_contract: AccountId = serde_json::from_str(&request.into_inner().message)
+            .map_err(|e| Status::invalid_argument(e.to_string()))?;
+
+        let mut contract = self.contract.lock().unwrap();
+        *contract = Some(deployed_contract.clone());
+
         let mut nonce = self.nonce.lock().unwrap();
         *nonce = rand::thread_rng().gen::<Nonce>();
-        let msg = SessionCreate::new(*nonce);
+
+        let msg = SessionCreate::new(*nonce, deployed_contract.to_string());
 
         let attestation = self
             .attestor
@@ -253,8 +275,15 @@ where
             serde_json::from_str(&request.into_inner().message)
                 .map_err(|e| Status::invalid_argument(e.to_string()))?;
 
+        let contract = self.contract.lock().unwrap().clone();
+
         let (value, _msg) = proof
-            .verify(self.config.light_client_opts())
+            .verify(
+                self.config.light_client_opts(),
+                contract.expect("contract not set"),
+                SESSION_KEY.to_string(),
+                None,
+            )
             .map_err(Status::failed_precondition)?;
 
         let session: Session = serde_json::from_slice(&value).unwrap();
@@ -290,7 +319,13 @@ pub struct ProofOfPublication<M> {
 }
 
 impl<M> ProofOfPublication<M> {
-    pub fn verify(self, light_client_opts: &LightClientOpts) -> Result<(Vec<u8>, M), String> {
+    pub fn verify(
+        self,
+        light_client_opts: &LightClientOpts,
+        contract_address: AccountId,
+        storage_key: String,
+        storage_namespace: Option<String>,
+    ) -> Result<(Vec<u8>, M), String> {
         let config_trust_threshold = light_client_opts.trust_threshold();
         let trust_threshold =
             TrustThreshold::new(config_trust_threshold.0, config_trust_threshold.1).unwrap();
@@ -321,6 +356,11 @@ impl<M> ProofOfPublication<M> {
         )
         .and_then(|mut primary| primary.verify_to_height(target_height))
         .map_err(|e| e.to_string())?;
+
+        let key = CwAbciKey::new(contract_address, storage_key, storage_namespace);
+        if key.into_vec() != self.merkle_proof.key() {
+            return Err("Merkle proof key mismatch".to_string());
+        }
 
         let proof = CwProof::from(self.merkle_proof);
         proof
