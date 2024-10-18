@@ -1,11 +1,8 @@
-# Setup local accounts. This is only for local development and should not be used in production.
+# the ./accounts/ folder. We assume that the mnemonic for each account is the
+# last line of each of the text files.
 import-local-accounts:
-	neutrond keys add admin --keyring-backend test > ./data/accounts/admin.txt 2>&1
-	neutrond keys add alice --keyring-backend test > ./data/accounts/alice.txt 2>&1
-	neutrond keys add bob --keyring-backend test > ./data/accounts/bob.txt 2>&1
-	neutrond keys add charlie --keyring-backend test > ./data/accounts/charlie.txt 2>&1
-
-create-local-accounts: import-local-accounts
-	@echo "Local accounts have been created."
-
-.PHONY: create-local-accounts import-local-accounts
+	tail -n 1 data/accounts/admin.txt | neutrond keys add admin --recover --keyring-backend=test
+	tail -n 1 data/accounts/alice.txt | neutrond keys add alice --recover --keyring-backend=test
+	tail -n 1 data/accounts/bob.txt | neutrond keys add bob --recover --keyring-backend=test
+	tail -n 1 data/accounts/charlie.txt | neutrond keys add charlie --recover --keyring-backend=test
+.PHONY: import-accounts

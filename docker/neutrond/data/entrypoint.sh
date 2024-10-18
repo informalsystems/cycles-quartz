@@ -40,4 +40,4 @@ done
 neutrond add-consumer-section
 
 # Start node
-neutrond start --trace
+neutrond start --trace --rpc.laddr="tcp://0.0.0.0:26657" --api.address="tcp://0.0.0.0:1317" --grpc.address="0.0.0.0:9090"

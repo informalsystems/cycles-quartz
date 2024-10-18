@@ -2,15 +2,26 @@
 
 ## Table of Contents
 
-- [Introduction](#introduction)
-- [Quick Start](#quick-start)
-- [Simple Example](#simple-example)
-- [Installation](#installation)
-- [Local Testnet without SGX](#local-neutrond-testnet-without-sgx)
-- [Real Testnet with SGX](#real-testnet-with-azure-sgx)
-- [Other Testnets with SGX](#other-testnets-with-sgx)
-- [Troubleshooting and FAQ](#troubleshooting-and-faq)
-- [Glossary](#glossary)
+- [Quartz: Getting Started Guide](#quartz-getting-started-guide)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Quick Start](#quick-start)
+  - [Simple Example - Local Mock SGX Application](#simple-example---local-mock-sgx-application)
+    - [Installation](#installation)
+      - [Install Rust](#install-rust)
+      - [Install Quartz](#install-quartz)
+      - [Install a CosmWasm Client](#install-a-cosmwasm-client)
+    - [Local neutrond Testnet Without SGX](#local-neutrond-testnet-without-sgx)
+    - [Enclave](#enclave)
+    - [Contract](#contract)
+    - [Frontend](#frontend)
+    - [Use the App](#use-the-app)
+  - [Real Testnet with Azure SGX](#real-testnet-with-azure-sgx)
+    - [Setting up an Azure machine](#setting-up-an-azure-machine)
+    - [Using an enclave on another machine](#using-an-enclave-on-another-machine)
+    - [Other Testnets With SGX](#other-testnets-with-sgx)
+  - [Troubleshooting and FAQ](#troubleshooting-and-faq)
+  - [Glossary](#glossary)
 
 ## Introduction
 
@@ -23,7 +34,7 @@ This guide will help you get up and running with an example Quartz application. 
 For those who want to get started quickly with the example Transfers app with
 mock SGX:
 
-1. Install dependencies (Rust, docker desktop v.4.34.3 or docker cli)
+1. Install dependencies (Rust, docker)
 2. Clone the repository: `git clone ssh://git@github.com/informalsystems/cycles-quartz`
 3. Run everything: `cd cycles-quartz/docker && docker compose up`
 4. On docker desktop, go to the `enclave` logs and copy `contract address` and `pub key` to later setup the Frontend `env.local`
@@ -73,7 +84,6 @@ Pre-reqs:
 - Git
 - Make
 - Go or Docker
-- Docker desktop v.4.34.3 with `host networking` enabled [here](https://docs.docker.com/engine/network/drivers/host/?uuid=67f19d61-ae59-4996-9060-01ebef9a586c%0A#docker-desktop).
 - NPM
 
 #### Install Rust
@@ -121,7 +131,21 @@ docker compose up node
 ```
 
 It will pre-configure a few keys (admin, alice, etc.) and allocate funds to them. 
-The default sending account for quartz txs is `admin`. 
+The default sending account for quartz txs is `admin`.
+However, these accounts are setup in the docker image. Because we will be deploying our contracts outside of the docker image
+we need to have these accounts imported locally. You can do this by install neutrond locally and importing the accounts:
+
+```bash
+cd ~
+git clone -b main https://github.com/neutron-org/neutron.git
+cd neutron/
+make install-test-binary
+
+cd cycles-quartz/docker/neutrond
+make import-local-accounts
+```
+
+Your local `admin` will now be the exact same as the `admin` in the docker image.
 
 If building from source, you'll need to initialize the accounts yourself. See
 the guide on [setting up a CosmWasm chain](/docs/neutrond_setup.md) and then return back here.
@@ -160,7 +184,7 @@ Now, from `examples/transfers`:
    quartz --mock-sgx enclave start
    ```
 
-The enclave is a long running process. You'll have to open another window to
+If the enclave says `Spawning enclave process....` it is working. Now open another window to
 continue.
 
 ### Contract

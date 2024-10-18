@@ -14,19 +14,25 @@ services:
           "-f",
           "http://127.0.0.1:1317/cosmos/base/tendermint/v1beta1/blocks/1",
         ]
-      start_period: 10s
-      interval: 5s
-      timeout: 5s
+      start_period: 30s
+      interval: 10s
+      timeout: 10s
       retries: 3
     volumes:
       - data:/root/.neutrond
     build:
       context: "./neutrond"
-    network_mode: host
+    ports:
+      - 1317:1317
+      - 9090:9090
+      - 26656:26656
+      - 26657:26657
   enclave:
     container_name: enclave
     environment:
-      DOCKER_BUILDKIT: 1
+      QUARTZ_GRPC_URL: http://node:9090
+      QUARTZ_NODE_URL: http://node:26657
+      QUARTZ_WS_URL: ws://node:26657/websocket
       ADMIN_SK: 07b291dca4ead76392945ea0a8c35b2d506617d36337788c9043c8fc992213e1
     build:
       context: ".."
@@ -36,4 +42,5 @@ services:
         condition: service_healthy
     volumes:
       - data:/root/.neutrond
-    network_mode: host
+    ports:
+      - 11090:11090
