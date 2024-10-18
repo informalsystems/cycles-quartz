@@ -139,6 +139,22 @@ We can deploy the enclave and contract all at once using the `quartz dev`
 convenience command (like in the [quick start](#quick-start)), but here we'll
 show the individual commands.
 
+### Configure Key
+
+At the moment, we have to do an insecure operation to export the private key to
+be used for signing transactions so it can be used by the enclave. This is a
+temporary hack:
+
+```bash
+export ADMIN_SK=$(yes | neutrond keys export admin --unsafe --unarmored-hex)
+```
+
+Make sure the key is set:
+
+```bash
+echo $ADMIN_SK
+```
+
 ### Enclave
 
 First we build and run the enclave code. 
@@ -188,11 +204,6 @@ environment variable:
 export CONTRACT_ADDRESS=<CONTRACT_ADDRESS>
 ```
 
-You must also set the admin secret key:
-
-```bash
-export ADMIN_SK=ffc4d3c9119e9e8263de08c0f6e2368ac5c2dacecfeb393f6813da7d178873d2
-```
 
 3. Perform the handshake:
    ```bash

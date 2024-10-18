@@ -1,6 +1,6 @@
 mock_sgx = true
 tx_sender = "admin"
-chain_id = "test-1"
+chain_id = "testing"
 node_url = "http://127.0.0.1:26657"
 ws_url = "ws://127.0.0.1:26657/websocket"
 grpc_url = "http://127.0.0.1:9090"

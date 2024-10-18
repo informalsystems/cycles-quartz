@@ -1,4 +1,4 @@
-# CosmWasm Binaries: Manual Install and Configure
+  CosmWasm Binaries: Manual Install and Configure
 
 > Note - We highly recommend setting up `neutrond` with the docker image provided. However, we have provided these detailed instructions in case you wanted to take a deeper look.
 
@@ -21,8 +21,8 @@ For `neutrond`:
 ```bash
 git clone -b main https://github.com/neutron-org/neutron.git
 cd neutron
-git checkout v4.0.0
-make install
+git checkout v4.0.1
+make install-test-binary
 ```
 
 For `wasmd` (NOTE - NOT SUPPORTED BY CLI):
@@ -45,7 +45,7 @@ We also have to give the chain a chain ID. We'll use `testing`.
 Run 
 
 ```bash
-neutrond init <your name> --chain-id testing
+neutrond init yourname --chain-id testing --default-denom untrn
 ```
 
 to initialize the local neutrond folder.
@@ -53,7 +53,9 @@ to initialize the local neutrond folder.
 Now open the file `~/.neutrond/config/client.toml` and change the field
 `keyring-backend` from `os` to `test`:
 
-```toml keyring-backend = "test" ```
+```toml 
+keyring-backend = "test" 
+```
 
 Now, finally, we can create a local admin key for your neutrond. You'll use this to
 deploy contracts:
@@ -67,20 +69,15 @@ This should output a neutron address.
 Now create the genesis file.
 
 ```bash 
-# generate a second key for the validator 
-neutrond keys add validator
+# fund the account in genesis 
+neutrond add-genesis-account admin 100000000000untrn
 
-# fund both accounts in genesis 
-neutrond genesis add-genesis-account admin 100000000000stake,100000000000ucosm 
-neutrond genesis add-genesis-account validator 100000000000stake,100000000000ucosm
-
-# sign genesis tx from validator and compose genesis 
-neutrond genesis gentx validator 100000000stake --chain-id testing 
-neutrond genesis collect-gentxs 
+# configure the ICS setup (neutrond expects to run as a consumer chain)
+neutrond add-consumer-section
 ```
 
 Before finally starting the node, for it to work with the front end, you need to
-configure CORS.
+configure CORS and a min gas price.
 
 ### Configure CORS
 
@@ -100,6 +97,30 @@ And in `~/.neutrond/config/app.toml`:
 enable = true 
 address = "tcp://0.0.0.0:1317" 
 enabled-unsafe-cors = true 
+```
+
+### Configure min gas
+
+In `~/.neutrond/config/app.toml`, set the min gas price:
+
+```toml
+minimum-gas-prices = "0.0001untrn"
+```
+
+And in `~/.neutrond/config/genesis.json`, set the denom and the feemarket min gas price:
+
+```json
+        "fee_denom": "untrn", 
+```
+
+```json
+        "min_base_gas_price": "0.000100000000000000",
+```
+
+and 
+
+```json
+        "base_gas_price": "0.000100000000000000",
 ```
 
 Now, finally:
