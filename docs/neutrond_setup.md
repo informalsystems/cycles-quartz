@@ -138,7 +138,7 @@ Assuming you're using the Neutron testnet, create a new account called `admin`:
 neutrond keys add admin
 ```
 
-Now use a faucet or send this address to someone who can give you funds on the tesnet. 
+Now use a faucet or send this address to someone who can give you funds on the testnet. 
 
 If you have funds yourself you can simply transfer them:
 

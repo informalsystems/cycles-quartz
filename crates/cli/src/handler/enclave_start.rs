@@ -12,6 +12,7 @@ use quartz_common::enclave::types::Fmspc;
 use reqwest::Url;
 use tendermint::chain::Id;
 use tokio::process::{Child, Command};
+use tokio::io::AsyncBufReadExt;
 use tracing::{debug, info};
 
 use crate::{
@@ -116,7 +117,7 @@ impl Handler for EnclaveStartRequest {
 
 async fn handle_process(mut child: Child) -> Result<()> {
     let status = child.wait().await?;
-
+    println!("logging test 2"); // DK - not reached
     if !status.success() {
         return Err(eyre!("Couldn't build enclave. {:?}", status));
     }
@@ -149,15 +150,43 @@ async fn create_mock_enclave_child(
 
     let mut command = Command::new(executable.display().to_string());
 
-    command.args(enclave_args);
+    // Capture stdout and stderr
+    command.args(enclave_args)
+           .stdout(std::process::Stdio::piped()) // capture stdout
+           .stderr(std::process::Stdio::piped()); // capture stderr
 
     debug!("Enclave Start Command: {:?}", command);
 
     info!("{}", "🚧 Spawning enclave process ...".green().bold());
-    let child = command.kill_on_drop(true).spawn()?;
+    let mut child = command.spawn()?;
+    println!("Spawned process with PID: {:?}", child.id());
+
+
+    // Capture and log output
+    if let Some(stdout) = child.stdout.take() {
+        tokio::spawn(async move {
+            let reader = tokio::io::BufReader::new(stdout);
+            let mut lines = reader.lines();
+            while let Ok(Some(line)) = lines.next_line().await {
+                info!("Enclave stdout: {}", line);
+            }
+        });
+    }
+
+    if let Some(stderr) = child.stderr.take() {
+        tokio::spawn(async move {
+            let reader = tokio::io::BufReader::new(stderr);
+            let mut lines = reader.lines();
+            while let Ok(Some(line)) = lines.next_line().await {
+                info!("Enclave stderr: {}", line);
+            }
+        });
+    }
+    println!("logging test 1"); // neither stdout nor stderr print anything
 
     Ok(child)
 }
+
 
 async fn gramine_sgx_gen_private_key(enclave_dir: &Path) -> Result<()> {
     // Launch the gramine-sgx-gen-private-key command

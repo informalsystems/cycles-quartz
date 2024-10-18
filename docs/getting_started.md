@@ -154,10 +154,13 @@ Now, from `examples/transfers`:
    ```bash
    quartz --mock-sgx enclave build
    ```
-
-2. Start the enclave:
+2. Set the admin secret key
    ```bash
-   quartz --mock-sgx enclave start
+   export ADMIN_SK=ffc4d3c9119e9e8263de08c0f6e2368ac5c2dacecfeb393f6813da7d178873d2
+   ```
+3. Start the enclave:
+   ```bash
+   quartz --mock-sgx enclave start --unsafe-trust-latest --chain-id "testing"
    ```
 
 The enclave is a long running process. You'll have to open another window to
