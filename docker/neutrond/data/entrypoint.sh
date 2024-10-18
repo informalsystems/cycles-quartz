@@ -15,6 +15,9 @@ sed -i 's/minimum-gas-prices = ""/minimum-gas-prices = "0.0025untrn"/g' /root/.n
 sed -i 's/enabled-unsafe-cors = false/enabled-unsafe-cors = true/g' /root/.neutrond/config/app.toml
 sed -i 's/enable = false/enable = true/g' /root/.neutrond/config/app.toml
 sed -i 's/swagger = false/swagger = true/g' /root/.neutrond/config/app.toml
+sed -i 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/' /root/.neutrond/config/config.toml
+sed -i 's/address = "0.0.0.0:9090"/address = "0.0.0.0:9090"/' /root/.neutrond/config/app.toml
+sed -i 's/enable = false/enable = true/' /root/.neutrond/config/app.toml
 
 GENESIS_PATH="/root/.neutrond/config/genesis.json"
 

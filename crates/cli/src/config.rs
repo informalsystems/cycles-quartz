@@ -89,7 +89,7 @@ fn default_tx_sender() -> String {
 }
 
 fn default_chain_id() -> ChainId {
-    "testing".parse().expect("default chain_id failed")
+    "test-1".parse().expect("default chain_id failed")
 }
 
 fn default_port() -> u16 {
