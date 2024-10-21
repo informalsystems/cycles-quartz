@@ -15,7 +15,7 @@ use tokio::process::{Child, Command};
 use tracing::{debug, info};
 
 use crate::{
-    config::Config,
+    config::{Config, GramineBinPrefix},
     handler::{utils::helpers::write_cache_hash_height, Handler},
     request::enclave_start::EnclaveStartRequest,
     response::{enclave_start::EnclaveStartResponse, Response},
@@ -80,7 +80,7 @@ impl Handler for EnclaveStartRequest {
             let enclave_dir = fs::canonicalize(config.app_dir.join("enclave"))?;
 
             // gramine private key
-            gramine_sgx_gen_private_key(&enclave_dir).await?;
+            gramine_sgx_gen_private_key(&config.gramine_bin_prefix, &enclave_dir).await?;
 
             // gramine manifest
             let quartz_dir_canon = &enclave_dir.join("..");
@@ -88,6 +88,7 @@ impl Handler for EnclaveStartRequest {
             debug!("quartz_dir_canon: {:?}", quartz_dir_canon);
 
             gramine_manifest(
+                &config.gramine_bin_prefix,
                 &trusted_height.to_string(),
                 &trusted_hash.to_string(),
                 &config.chain_id,
@@ -103,10 +104,11 @@ impl Handler for EnclaveStartRequest {
             .await?;
 
             // gramine sign
-            gramine_sgx_sign(&enclave_dir).await?;
+            gramine_sgx_sign(&config.gramine_bin_prefix, &enclave_dir).await?;
 
             // Run quartz enclave and block
-            let enclave_child = create_gramine_sgx_child(&enclave_dir).await?;
+            let enclave_child =
+                create_gramine_sgx_child(&config.gramine_bin_prefix, &enclave_dir).await?;
             handle_process(enclave_child).await?;
         }
 
@@ -159,9 +161,12 @@ async fn create_mock_enclave_child(
     Ok(child)
 }
 
-async fn gramine_sgx_gen_private_key(enclave_dir: &Path) -> Result<()> {
+async fn gramine_sgx_gen_private_key(
+    gramine_bin_prefix: &GramineBinPrefix,
+    enclave_dir: &Path,
+) -> Result<()> {
     // Launch the gramine-sgx-gen-private-key command
-    Command::new("gramine-sgx-gen-private-key")
+    Command::new_prefixed(gramine_bin_prefix.as_ref(), "gramine-sgx-gen-private-key")
         .current_dir(enclave_dir)
         .output()
         .await
@@ -174,6 +179,7 @@ async fn gramine_sgx_gen_private_key(enclave_dir: &Path) -> Result<()> {
 
 #[allow(clippy::too_many_arguments)]
 async fn gramine_manifest(
+    gramine_bin_prefix: &GramineBinPrefix,
     trusted_height: &str,
     trusted_hash: &str,
     chain_id: &Id,
@@ -197,7 +203,7 @@ async fn gramine_manifest(
         .display()
         .to_string();
 
-    let status = Command::new("gramine-manifest")
+    let status = Command::new_prefixed(gramine_bin_prefix.as_ref(), "gramine-manifest")
         .arg("-Dlog_level=error")
         .arg(format!("-Dhome={}", home_dir))
         .arg(format!("-Darch_libdir={}", arch_libdir))
@@ -233,8 +239,8 @@ async fn gramine_manifest(
     Ok(())
 }
 
-async fn gramine_sgx_sign(enclave_dir: &Path) -> Result<()> {
-    let status = Command::new("gramine-sgx-sign")
+async fn gramine_sgx_sign(gramine_bin_prefix: &GramineBinPrefix, enclave_dir: &Path) -> Result<()> {
+    let status = Command::new_prefixed(gramine_bin_prefix.as_ref(), "gramine-sgx-sign")
         .arg("--manifest")
         .arg("quartz.manifest")
         .arg("--output")
@@ -254,10 +260,13 @@ async fn gramine_sgx_sign(enclave_dir: &Path) -> Result<()> {
     Ok(())
 }
 
-async fn create_gramine_sgx_child(enclave_dir: &Path) -> Result<Child> {
+async fn create_gramine_sgx_child(
+    gramine_bin_prefix: &GramineBinPrefix,
+    enclave_dir: &Path,
+) -> Result<Child> {
     info!("🚧 Spawning enclave process ...");
 
-    let child = Command::new("gramine-sgx")
+    let child = Command::new_prefixed(gramine_bin_prefix.as_ref(), "gramine-sgx")
         .arg("./quartz")
         .kill_on_drop(true)
         .current_dir(enclave_dir)
@@ -265,4 +274,25 @@ async fn create_gramine_sgx_child(enclave_dir: &Path) -> Result<Child> {
         .map_err(|e| eyre!("Failed to spawn gramine-sgx child process: {}", e))?;
 
     Ok(child)
+}
+
+pub trait PrefixedCommandEx: Sized {
+    fn new_prefixed(prefix: &str, program: &str) -> Self;
+}
+
+impl PrefixedCommandEx for Command {
+    fn new_prefixed(prefix: &str, program: &str) -> Self {
+        if !prefix.is_empty() {
+            let mut parts = prefix.split_whitespace();
+            let prefix_command = parts.next().unwrap();
+            let prefix_args: Vec<&str> = parts.collect();
+
+            let mut command = Command::new(prefix_command);
+            command.args(&prefix_args);
+            command.arg(program);
+            command
+        } else {
+            Command::new(program)
+        }
+    }
 }
