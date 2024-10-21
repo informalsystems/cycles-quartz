@@ -1,12 +1,19 @@
 [package]
 name = "cw-client"
 version.workspace = true
+authors.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
-readme.workspace = true
 repository.workspace = true
-authors.workspace = true
+homepage.workspace = true
+categories = ["cryptography::cryptocurrencies", "wasm"]
+keywords = ["cosmos", "cosmwasm", "cycles", "quartz", "sgx"]
+readme = "README.md"
+description = """
+Rust library for interacting with CosmWasm-enabled blockchains. 
+Deploy contracts, query them, and execute transactions.
+"""
 
 [lib]
 path = "src/lib.rs"

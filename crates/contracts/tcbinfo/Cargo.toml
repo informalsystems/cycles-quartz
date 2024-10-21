@@ -6,6 +6,13 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+categories = ["cryptography::cryptocurrencies", "wasm"]
+keywords = ["cosmos", "cosmwasm", "cycles", "quartz", "sgx"]
+readme = "README.md"
+description = """
+Standalone CosmWasm smart contract for storage and verification of TcbInfos for Intel SGX.
+"""
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

@@ -1,11 +1,16 @@
-[workspace]
-
 [package]
 name = "transfers-contract"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.75.0"
+license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/informalsystems/cycles-quartz"
+homepage = "https://cycles.money"
 authors = ["Informal Systems <hello@informal.systems>"]
 exclude = ["contract.wasm", "hash.txt"]
+description = """
+"""
 
 [[bin]]
 name = "schema"
@@ -37,16 +42,14 @@ thiserror = { version = "1.0.63" }
 
 # cosmwasm
 cosmwasm-std = { version = "2.1.1", default-features = false, features = [
-  "abort",
+    "abort",
 ] }
 cosmwasm-schema = { version = "2.1.1", default-features = false }
 cw-storage-plus = { version = "2.0.0", default-features = false }
 cw-utils = { version = "2.0.0", default-features = false }
 
 # quartz
-# TODO: Until the repo is public, let's use the relative path
-# quartz-common = { git = "ssh://git@github.com/informalsystems/cycles-quartz.git", features=["contract"]}
-quartz-common = { path = "../../../crates/common", features = ["contract"] }
+quartz-common = { version = "0.1.1", features = ["contract"] }
 
 # patch indirect deps
 getrandom = { version = "0.2.15", features = ["js"] }

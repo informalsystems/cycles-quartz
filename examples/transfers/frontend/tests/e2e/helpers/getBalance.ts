@@ -11,7 +11,11 @@ export const getBalance = async ({
   // Check new balance
   await page.getByRole('button', { name: /get/i }).click()
 
-  await signTx({ context, page })
+  await signTx({
+    context,
+    page,
+    notificationMsg: 'Balance updated successfully',
+  })
 
   // Wait for the success alert to appear so we know balance updated
   await page.getByText(/\$/i).waitFor({ state: 'visible' })

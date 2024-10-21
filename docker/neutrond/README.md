@@ -1,78 +1,51 @@
-# Setting up a Single Node Neutron Testnet
+# Quartz Neutrond image
 
-This guide provides instructions for setting up a single node Neutron testnet using Docker and local installation.
+This folder contains a `Dockerfile` that helps build a single-node [neutrond]
+for use in testing your Quartz application.
 
-> Note - For more detailed instructions, refer to the [official Neutron documentation](https://docs.neutron.org/neutron/build-and-run/neutron-docker).
+It facilitates the creation of a Docker image with 4 accounts pre-loaded, each
+having a small amount of `untrn` preloaded from genesis for experimentation.
 
-## Setup Steps
+- `admin`
+- `alice`
+- `bob`
+- `charlie`
 
-Clone the Neutron repository in your `$HOME` or your preferred repository:
-```
-git clone -b v4.0.1 https://github.com/neutron-org/neutron.git
-cd neutron
-```
+These accounts' details are stored in clear text in the [data/accounts](./data/accounts/)
+folder.
 
-Build the Docker image:
-```
-make build-docker-image
-```
+**Note: this image is _NOT_ intended to be used in production.**
 
-Start the Docker container:
-```
-make start-docker-container
-```
+## Using the image
 
-Monitor the logs:
-```
-docker ps  # Get the container ID
-docker logs -f <neutron-node-container-id>
+For running this image you can just use the already prepared [docker-compose.yml](../docker-compose.yml)
+file by simply run at `docker` folder root level:
+
+```bash
+docker compose up node
 ```
 
-Verify the Docker keyring setup:
-```
-docker exec -it neutron neutrond query bank balances neutron1qnk2n4nlkpw9xfqntladh74w6ujtulwn6dwq8z --chain-id test-1
-```
-This should return:
-```
-balances:
-- amount: "100000000000000"
-denom: untrn
-pagination:
-total: "1"
+## Importing the account keys
+
+As previously mentioned, the [data/accounts](./data/accounts/) folder contains all of
+the necessary material to construct the public/private keypairs of the accounts.
+
+A convenient helper target is provided in [`/Makefile`](./Makefile) to facilitate
+importing of these accounts into a local `neutrond` configuration (i.e. on your
+host machine, outside of the Docker container). This will allow you to transact
+on behalf of any of those accounts from outside of the Docker container.
+
+**NB**: For this to work, you will need the same version of `neutrond` installed on
+your local machine as what is built into the `neutrond` Docker image.
+
+```bash
+make import-local-accounts
 ```
 
-Install neutrond locally:
-```
-make install
-```
+To check that the accounts have been imported correctly, on your host machine
+run:
 
-To setup the local keyring:
+```bash
+# List all keys available in your local neutrond configuration
+neutrond keys list --keyring-backend=test
 ```
-cd docker/neutrond
-make create-local-accounts
-```
-
-Verify local keyring setup:
-```
-neutrond query bank balances neutron1qnk2n4nlkpw9xfqntladh74w6ujtulwn6dwq8z --chain-id test-1
-```
-
-This should return:
-```
-balances:
-- amount: "100000000000000"
-denom: untrn
-pagination:
-total: "1"
-```
-
-To stop and reset the chain, go back into the neutron source folder from github and run:
-```
-make stop-docker-container
-```
-
-## How accounts are setup on neutron
-We use the standard 7 accounts that come from the neutron base docker setup. We have imported those to `docker/neutrond/accounts`. These accounts already exist in the container running the node, and we get them locally by running `make import-local-accounts`. We don't have functions to create or delete accounts, since we want to strictly follow their base docker setup, and thus keep the accounts the exact same. The 7 accounts are:
-- `demowallet1`, `demowallet2` and `demowallet3` - These are the accounts you should use for testing. They are seeded with the test token `untrn`, and 2 IBC tokens, `uibcatom` and `uibcusdc`.
-- `val1` and `val2` - accounts used to setup the validators for the test network. Seeded only with the test token `untrn`. Use if you need extra accounts beyond the demo wallets.
-- `rly1` and `rly2` - accounts used to setup IBC relayers for the test network. Only seeded with `untrn`. Use if you need extra accounts beyond the demo wallets.

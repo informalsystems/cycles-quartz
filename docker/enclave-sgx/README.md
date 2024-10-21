@@ -1,5 +1,7 @@
 # Quartz Enclave Build/Run Image for SGX
 
+> NOTE - As of v0.1 release, this dockerfile is out of date and does not work.
+
 This folder contains the basis for a multi-stage Docker image that:
 
 1. Builds the enclave

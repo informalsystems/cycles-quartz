@@ -1,31 +1,39 @@
 name: "transfers"
 
 volumes:
-  wasmd_data:
+  data:
 
 services:
   node:
-    container_name: wasmd
-    build: "./wasmd"
-    ports:
-      - "26657:26657"
-      - "26656:26656"
-      - "1317:1317"
-    network_mode: host
+    container_name: neutron
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "http://127.0.0.1:1317/cosmos/base/tendermint/v1beta1/blocks/1",
+        ]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 3
     volumes:
-      - wasmd_data:/root/.wasmd
-
+      - data:/root/.neutrond
+    build:
+      context: "./neutrond"
+    network_mode: host
   enclave:
-    container_name: quartz-cli-transfers
+    container_name: enclave
     environment:
       DOCKER_BUILDKIT: 1
+      ADMIN_SK: 07b291dca4ead76392945ea0a8c35b2d506617d36337788c9043c8fc992213e1
     build:
       context: ".."
       dockerfile: "./crates/cli/Dockerfile"
     depends_on:
-      - node
-    ports:
-      - "11090:11090"
-    network_mode: host
+      node:
+        condition: service_healthy
     volumes:
-      - wasmd_data:/root/.wasmd
+      - data:/root/.neutrond
+    network_mode: host

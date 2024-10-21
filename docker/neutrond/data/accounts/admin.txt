@@ -1,6 +1,6 @@
 
 - address: neutron1zmr7dfc325907tvj8jl2p2p4cx84clk5aflstl
-  name: rly1
+  name: admin
   pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Ak3alwik1L65ujlKbgQP//JL3LUlJmvA0zn8rt4eeoHG"}'
   type: local
 

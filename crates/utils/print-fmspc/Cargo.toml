@@ -1,12 +1,18 @@
 [package]
 name = "quartz-print-fmspc"
 version.workspace = true
+authors.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
-readme.workspace = true
 repository.workspace = true
-authors.workspace = true
+homepage.workspace = true
+categories = ["command-line-utilities", "cryptography::cryptocurrencies", "hardware-support", "wasm"]
+keywords = ["cosmos", "cosmwasm", "cycles", "quartz", "sgx"]
+readme = "README.md"
+description = """
+Convenience tool to print the FMSPC (Family-Model-Stepping-Platform-Custom) of the local SGX processor.
+"""
 
 [dependencies]
 dcap-qvl = "0.1.0"

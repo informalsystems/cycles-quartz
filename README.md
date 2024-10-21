@@ -3,6 +3,9 @@
 Quartz is a flexible framework for privacy-preserving computation via Trusted Execution
 Environments (TEEs) organized and secured by smart contracts.
 
+Get started with Quartz on existing CosmWasm chains *without needing them to
+upgrade first*.
+
 _**Why?**_ Development of Quartz was motivated by the privacy needs of the [Cycles Protocol][cycles],
 which adopts a TEE-based ZK execution sidecar for private smart contracts. 
 For background on how to think about different privacy preserving
@@ -22,7 +25,8 @@ the enclave code is run. This significantly reduces the surface area of TEEs.
 See [How it Works][how_it_works].
 
 _**Where?**_ Quartz currently targets the CosmWasm smart contract environment and the Intel SGX enclave. 
-Other environments and TEEs remain for future work.
+Other environments and TEEs remain for future work. It works on existing
+CosmWasm chains without requiring them to upgrade first.
 
 _**Who?**_ Quartz is (currently) for any CosmWasm developer interested in adding privacy or secure off-chain compute to their contracts and applications.
 
@@ -54,7 +58,7 @@ Quartz provides developers three main tools:
 - a rust library (`quartz-enclave-core`) for building blockchain constrained SGX enclaves
 - a cli tool (`quartz`) for connecting the contract and the enclave.
 
-This repo contains an example, [`transfers`](/apps/transfers), which combines these
+This repo contains an example, [`transfers`](/examples/transfers), which combines these
 tools into a working private transfers application, complete with a Keplr-based
 frontend.
 
@@ -127,9 +131,9 @@ The repo contains some additional utilities for supporting Quartz development:
 * [quartz-cw-prover](crates/utils/cw-prover) - Retrieve a merkle-proof for CosmWasm state
 * [quartz-tm-prover](crates/utils/tm-prover) - Generate light client and merkle proofs for CosmWasm storage in a format that Quartz
   understands
-* [quartz-cw-client](crates/utils/quartz-cw-client) - Rust client for wasmd
+* [quartz-cw-client](crates/utils/cw-client) - Rust client for wasmd
   style blockchains
-* [quartz-print-fmspc](crates/utils/quartz-print-fmspc) - Print the FMSPC, a
+* [quartz-print-fmspc](crates/utils/print-fmspc) - Print the FMSPC, a
   description of the SGX processor family/model etc.
 
 
@@ -140,7 +144,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-TBD
+Apache 2.0
 
 [cycles]: https://cycles.money
 [getting_started]: /docs/getting_started.md

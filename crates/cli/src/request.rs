@@ -5,7 +5,7 @@ use crate::{
     request::{
         contract_build::ContractBuildRequest, contract_deploy::ContractDeployRequest,
         dev::DevRequest, enclave_build::EnclaveBuildRequest, enclave_start::EnclaveStartRequest,
-        handshake::HandshakeRequest, init::InitRequest,
+        handshake::HandshakeRequest, init::InitRequest, print_fmspc::PrintFmspcRequest,
     },
 };
 
@@ -17,6 +17,8 @@ pub mod enclave_start;
 pub mod handshake;
 pub mod init;
 
+pub mod print_fmspc;
+
 #[derive(Clone, Debug)]
 pub enum Request {
     Init(InitRequest),
@@ -26,6 +28,7 @@ pub enum Request {
     EnclaveBuild(EnclaveBuildRequest),
     EnclaveStart(EnclaveStartRequest),
     Dev(DevRequest),
+    PrintFmspc(PrintFmspcRequest),
 }
 
 impl TryFrom<Command> for Request {
@@ -62,6 +65,7 @@ impl TryFrom<Command> for Request {
                 }
                 .into())
             }
+            Command::PrintFmspc => Ok(Request::PrintFmspc(PrintFmspcRequest)),
         }
     }
 }

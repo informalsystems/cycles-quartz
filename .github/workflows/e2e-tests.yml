@@ -23,20 +23,20 @@ jobs:
         timeout-minutes: 25
         run: |
           echo "Waiting for handshake completion..."
-          while ! docker logs quartz-cli-transfers 2>&1 | grep -q "Enclave is listening"; do
+          while ! docker logs enclave 2>&1 | grep -q "Enclave is listening"; do
             sleep 30
           done
 
       - name: Capture logs from CLI
         working-directory: examples/transfers/frontend
-        run: docker logs --tail 50 quartz-cli-transfers &> quartz-cli-transfers_logs.txt
+        run: docker logs --tail 50 enclave &> enclave.logs.txt
 
       - name: Setup Frontend environment variables for quartz
         working-directory: examples/transfers/frontend
         run: |
           cp .env.example .env.local
-          sed -i "s/^NEXT_PUBLIC_TRANSFERS_CONTRACT_ADDRESS=.*/NEXT_PUBLIC_TRANSFERS_CONTRACT_ADDRESS=$(grep 'Contract Address:' quartz-cli-transfers_logs.txt | awk '{print $NF}')/" .env.local
-          sed -i "s/^NEXT_PUBLIC_ENCLAVE_PUBLIC_KEY=.*/NEXT_PUBLIC_ENCLAVE_PUBLIC_KEY=$(grep 'Handshake complete:' quartz-cli-transfers_logs.txt | awk '{print $NF}')/" .env.local
+          sed -i "s/^NEXT_PUBLIC_TRANSFERS_CONTRACT_ADDRESS=.*/NEXT_PUBLIC_TRANSFERS_CONTRACT_ADDRESS=$(grep 'Contract Address:' enclave.logs.txt | awk '{print $NF}')/" .env.local
+          sed -i "s/^NEXT_PUBLIC_ENCLAVE_PUBLIC_KEY=.*/NEXT_PUBLIC_ENCLAVE_PUBLIC_KEY=$(grep 'Handshake complete:' enclave.logs.txt | awk '{print $NF}')/" .env.local
 
       - name: Install Frontend dependencies
         working-directory: examples/transfers/frontend

@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use async_trait::async_trait;
 use cargo_generate::{generate, GenerateArgs, TemplatePath, Vcs};
 use color_eyre::{eyre::Context, owo_colors::OwoColorize, Report, Result};
@@ -22,8 +20,6 @@ impl Handler for InitRequest {
         let config = config.as_ref();
         info!("{}", "\nPeforming Init".blue().bold());
 
-        let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
-
         let parent = self
             .name
             .parent()
@@ -45,8 +41,7 @@ impl Handler for InitRequest {
             overwrite: true,
             vcs: Some(Vcs::Git),
             template_path: TemplatePath {
-                // git: Some("git@github.com:informalsystems/cycles-quartz.git".to_string()), // TODO: replace with git address when open-sourced
-                path: Some(root_dir.join("examples/transfers").display().to_string()),
+                git: Some("https://github.com/informalsystems/cycles-quartz.git".to_string()),
                 ..TemplatePath::default()
             },
             ..GenerateArgs::default()

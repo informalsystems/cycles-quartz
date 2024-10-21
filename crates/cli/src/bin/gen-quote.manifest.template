@@ -1,0 +1,42 @@
+# Manifest file for creating dummy quotes
+
+libos.entrypoint = "{{ gen_quote_bin_path }}"
+
+loader.log_level = "{{ log_level }}"
+loader.entrypoint = "file:{{ gramine.libos }}"
+loader.env.LD_LIBRARY_PATH = "/lib:/usr/local/lib:{{ arch_libdir }}:/usr{{ arch_libdir }}"
+loader.env.HOME = "{{ home }}"
+loader.env.INSIDE_SGX = "1"
+loader.env.TLS = { passthrough = true }
+loader.env.RA_TYPE = { passthrough = true }
+loader.env.RA_TLS_ALLOW_DEBUG_ENCLAVE_INSECURE = { passthrough = true }
+loader.env.RA_TLS_ALLOW_OUTDATED_TCB_INSECURE = { passthrough = true }
+loader.env.RA_TLS_MRENCLAVE = { passthrough = true }
+loader.env.RA_TLS_MRSIGNER = { passthrough = true }
+loader.env.RA_TLS_ISV_SVN = { passthrough = true }
+loader.env.RA_TLS_ISV_PROD_ID = { passthrough = true }
+loader.env.MYAPP_DATA = { passthrough = true }
+
+fs.mounts = [
+  { uri = "file:{{ gramine.runtimedir() }}", path = "/lib" },
+  { uri = "file:{{ arch_libdir }}", path = "{{ arch_libdir }}" },
+  { uri = "file:/usr/{{ arch_libdir }}", path = "/usr{{ arch_libdir }}" },
+  { uri = "file:{{ gen_quote_bin_path }}", path = "{{ gen_quote_bin_path }}" },
+]
+
+sgx.enclave_size = "512M"
+sgx.max_threads = 2
+sgx.edmm_enable = {{ 'true' if env.get('EDMM', '0') == '1' else 'false' }}
+
+sgx.remote_attestation = "{{ ra_type }}"
+sgx.ra_client_linkable = {{ 'true' if ra_client_linkable == '1' else 'false' }}
+
+sgx.trusted_files = [
+  "file:{{ gramine.libos }}",
+  "file:{{ gen_quote_bin_path }}",
+  "file:{{ gramine.runtimedir() }}/",
+  "file:{{ arch_libdir }}/",
+  "file:/usr/{{ arch_libdir }}/",
+]
+
+sys.enable_sigterm_injection = true

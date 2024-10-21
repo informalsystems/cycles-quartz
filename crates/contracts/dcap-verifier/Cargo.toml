@@ -1,7 +1,18 @@
 [package]
 name = "quartz-dcap-verifier"
-version = "0.1.0"
-edition = "2021"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories = ["cryptography::cryptocurrencies", "wasm"]
+keywords = ["cosmos", "cosmwasm", "cycles", "quartz", "sgx"]
+readme = "README.md"
+description = """
+Standalone CosmWasm smart contract for verifying Intel SGX DCAP attestations that can be called by other contracts.
+"""
 
 exclude = [
     # Those files are rust-optimizer artifacts. You might want to commit them for convenience but they should not be part of the source code publication.

@@ -15,7 +15,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-cw-client = { path = "../packages/cw-client" }
+cw-client = { path = "crates/utils/cw-client", default-features = false }
 ```
 
 ## Usage

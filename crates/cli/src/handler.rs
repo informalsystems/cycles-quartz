@@ -12,6 +12,7 @@ pub mod enclave_build;
 pub mod enclave_start;
 pub mod handshake;
 pub mod init;
+pub mod print_fmspc;
 
 #[async_trait]
 pub trait Handler {
@@ -33,6 +34,7 @@ impl Handler for Request {
             Request::EnclaveBuild(request) => request.handle(config).await,
             Request::EnclaveStart(request) => request.handle(config).await,
             Request::Dev(request) => request.handle(config).await,
+            Request::PrintFmspc(request) => request.handle(config).await,
         }
         .map(Into::into)
     }

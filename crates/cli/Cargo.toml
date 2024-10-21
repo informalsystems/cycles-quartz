@@ -6,12 +6,22 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
-keywords = ["blockchain", "cosmos", "tendermint", "cycles", "quartz"]
+homepage.workspace = true
+categories = ["command-line-utilities", "cryptography::cryptocurrencies", "hardware-support", "wasm"]
+keywords = ["cosmos", "cosmwasm", "cycles", "quartz", "sgx"]
 readme = "README.md"
+default-run = "quartz"
+description = """
+A CLI tool to streamline development and deployment of Quartz applications. Quartz is a flexible framework for privacy-preserving computation via Trusted Execution Environments (TEEs) organized and secured by smart contracts.
+"""
 
 [[bin]]
 name = "quartz"
 path = "src/main.rs"
+
+[[bin]]
+name = "gen-quote"
+path = "src/bin/gen-quote.rs"
 
 [dependencies]
 async-trait.workspace = true
@@ -48,6 +58,7 @@ figment = { version = "0.10.19", features = ["env", "toml"] }
 clearscreen = "3.0.0"
 cargo_metadata = "0.18.1"
 serde_with = "3.10.0"
+dcap-qvl = "0.1.0"
 
 # cosmos
 cosmrs.workspace = true

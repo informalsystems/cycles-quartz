@@ -1,6 +1,6 @@
 
 - address: neutron152zj7nyksf7dgrt4tpcf64t92k4ar9c2c97wxz
-  name: rly2
+  name: alice
   pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A9jd2NZ40ZkD0TqBMmco6ejP1EzR1AnYIqSNm5m/Y997"}'
   type: local
 

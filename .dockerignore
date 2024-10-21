@@ -1,3 +1,12 @@
+*
+!crates
+!examples
+!Cargo.lock
+!Cargo.toml
+**/.cache
+**/frontend
 **/target
-docker
-docs
+**/.gitignore
+**/Makefile
+**/*.md
+!**/README.md

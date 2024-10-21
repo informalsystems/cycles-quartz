@@ -1,6 +1,6 @@
 
 - address: neutron1efkh8rpul8v6km98cuaejz0a5zczvvvz4ps82r
-  name: val2
+  name: charlie
   pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A0owhBMbRQ2jwJ7dKqwRA2fFyqSMpRmI2aefEdBIT/td"}'
   type: local
 

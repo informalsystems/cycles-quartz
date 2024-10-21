@@ -6,8 +6,13 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
-keywords = ["blockchain", "cosmos", "cosmwasm", "cycles", "quartz"]
+homepage.workspace = true
+categories = ["cryptography::cryptocurrencies", "wasm"]
+keywords = ["cosmos", "cosmwasm", "cycles", "quartz", "sgx"]
 readme = "README.md"
+description = """
+Merkle proofs of CosmWasm contract state. This crate contains proof types and a verifier implementation.
+"""
 
 [dependencies]
 # external

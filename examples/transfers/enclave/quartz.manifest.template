@@ -41,7 +41,7 @@ fs.mounts = [
   { uri = "file:/usr/{{ arch_libdir }}", path = "/usr{{ arch_libdir }}" },
   { uri = "file:{{ quartz_dir }}", path = "{{ quartz_dir }}" },
   { uri = "file:/etc/ssl/certs/ca-certificates.crt", path = "/etc/ssl/certs/ca-certificates.crt" },
-  { uri = "file:/usr/lib/ssl/cert.pem", path = "/usr/lib/ssl/cert.pem" },
+  { uri = "file:/usr/lib/ssl/certs/ca-certificates.crt", path = "/usr/lib/ssl/certs/ca-certificates.crt" },
 ]
 
 # sgx.debug = true
@@ -70,7 +70,7 @@ sgx.allowed_files = [
   "file:/etc/passwd",
   "file:/etc/gai.conf",
   "file:/etc/ssl/certs/ca-certificates.crt",
-  "file:/usr/lib/ssl/cert.pem",
+  "file:/usr/lib/ssl/certs/ca-certificates.crt",
   "file:/etc/sgx_default_qcnl.conf",
 ]
 

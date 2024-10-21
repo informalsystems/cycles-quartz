@@ -6,8 +6,13 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
-keywords = ["blockchain", "cosmos", "tendermint", "cycles", "quartz"]
+homepage.workspace = true
+categories = ["command-line-utilities", "cryptography::cryptocurrencies", "wasm"]
+keywords = ["cosmos", "cosmwasm", "cycles", "quartz", "sgx"]
 readme = "README.md"
+description = """
+CLI for generating a Merkle proof of CosmWasm state and accompanying tendermint light client proof (i.e. verification trace) for a given block height and trusted height/hash. Resulting proofs can be verified by quartz-tm-stateless-verifier.
+"""
 
 [[bin]]
 name = "main"

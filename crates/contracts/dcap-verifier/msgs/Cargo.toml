@@ -6,6 +6,12 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+keywords = ["cosmos", "cosmwasm", "cycles", "quartz", "sgx"]
+readme = "README.md"
+description = """
+Message and query definitions for the quartz-dcap-verifier contract
+"""
 
 [dependencies]
 # cosmos

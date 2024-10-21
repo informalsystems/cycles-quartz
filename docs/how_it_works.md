@@ -32,7 +32,8 @@ Verifying that the code with a given `mr_encalve` executed on an SGX device is
 called `remote attestation` (RA).
 
 Intel's latest standard for remote attestation is called DCAP (Data Center
-Attestation Primitives)
+Attestation Primitives). See the [Intel docs on
+remote attestation][intel-ra]
 
 DCAP verification is basically verification of an x509 certificate
 chain of signatures from Intel and from the given SGX device.
@@ -89,3 +90,5 @@ zero-knowledge proof (ZKP) of the whole execution.
 
 The smart contract can then verify the RA and the ZKP. The ZKP provides
 additional guarantees of the correctness of the execution performed by the TEE.
+
+[intel-ra]: https://www.intel.com/content/www/us/en/developer/tools/software-guard-extensions/attestation-services.html

@@ -12,10 +12,11 @@ exclude = ["examples/transfers/contracts", "examples/transfers/enclave"]
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-rust-version = "1.74.1"
-license = ""
+rust-version = "1.75.0"
+license = "Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/informalsystems/cycles-quartz"
+homepage = "https://cycles.money"
 authors = ["Informal Systems <hello@informal.systems>"]
 
 [workspace.dependencies]
@@ -124,20 +125,20 @@ mc-sgx-dcap-sys-types = { version = "0.11.0", default-features = false }
 mc-attestation-verifier = { version = "0.4.3", default-features = false }
 
 # quartz
-quartz-cw-proof = { path = "crates/enclave/cw-proof", default-features = false }
-quartz-common = { path = "crates/common", default-features = false }
-quartz-contract-core = { path = "crates/contracts/core", default-features = false }
-quartz-dcap-verifier-msgs = { path = "crates/contracts/dcap-verifier/msgs", default-features = false }
-quartz-enclave-core = { path = "crates/enclave/core", default-features = false }
-quartz-proto = { path = "crates/enclave/proto", default-features = false }
-quartz-tee-ra = { path = "crates/contracts/tee-ra", default-features = false }
-quartz-tcbinfo = { path = "crates/contracts/tcbinfo", default-features = false, features = [
+quartz-cw-proof = { version = "0.1.0", path = "crates/enclave/cw-proof", default-features = false }
+quartz-common = { version = "0.1.0", path = "crates/common", default-features = false }
+quartz-contract-core = { version = "0.1.0", path = "crates/contracts/core", default-features = false }
+quartz-dcap-verifier-msgs = { version = "0.1.0", path = "crates/contracts/dcap-verifier/msgs", default-features = false }
+quartz-enclave-core = { version = "0.1.1", path = "crates/enclave/core", default-features = false }
+quartz-proto = { version = "0.1.0", path = "crates/enclave/proto", default-features = false }
+quartz-tee-ra = { version = "0.1.0", path = "crates/contracts/tee-ra", default-features = false }
+quartz-tcbinfo = { version = "0.1.0", path = "crates/contracts/tcbinfo", default-features = false, features = [
     "library",
 ] }
-quartz-tcbinfo-msgs = { path = "crates/contracts/tcbinfo/msgs", default-features = false }
-quartz-tm-prover = { path = "crates/utils/tm-prover", default-features = false }
-quartz-tm-stateless-verifier = { path = "crates/enclave/tm-stateless-verifier", default-features = false }
-cw-client = { path = "crates/utils/cw-client", default-features = false }
+quartz-tcbinfo-msgs = { version = "0.1.0", path = "crates/contracts/tcbinfo/msgs", default-features = false }
+quartz-tm-prover = { version = "0.1.0", path = "crates/utils/tm-prover", default-features = false }
+quartz-tm-stateless-verifier = { version = "0.1.0", path = "crates/enclave/tm-stateless-verifier", default-features = false }
+cw-client = { version = "0.1.0", path = "crates/utils/cw-client", default-features = false }
 
 [profile.release]
 opt-level = "z"

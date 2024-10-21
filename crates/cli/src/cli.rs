@@ -79,6 +79,9 @@ pub enum Command {
 
     /// Build, deploy, perform handshake, and run quartz app while listening for changes
     Dev(DevArgs),
+
+    /// Print the FMSPC of the current platform (SGX only)
+    PrintFmspc,
 }
 
 #[allow(clippy::large_enum_variant)]
@@ -296,6 +299,7 @@ impl ToFigment for Command {
             Command::Dev(args) => Figment::from(Serialized::defaults(args))
                 .merge(Serialized::defaults(&args.contract_deploy))
                 .merge(Serialized::defaults(&args.enclave_build)),
+            Command::PrintFmspc => Figment::default(),
         }
     }
 }

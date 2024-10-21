@@ -1,12 +1,18 @@
 [package]
 name = "quartz-common"
-version.workspace = true
+version = "0.1.1"
+authors.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
-readme.workspace = true
 repository.workspace = true
-authors.workspace = true
+homepage.workspace = true
+categories = ["cryptography::cryptocurrencies", "wasm"]
+keywords = ["cosmos", "cosmwasm", "cycles", "quartz", "sgx"]
+readme = "README.md"
+description = """
+A wrapper crate around quartz-contract-core, quartz-enclave-core, and quartz-proto.
+"""
 
 [features]
 full = ["contract", "enclave", "proto"]

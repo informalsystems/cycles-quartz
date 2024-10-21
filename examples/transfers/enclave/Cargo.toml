@@ -4,8 +4,15 @@
 name = "quartz-app-transfers-enclave"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.75.0"
+license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/informalsystems/cycles-quartz"
+homepage = "https://cycles.money"
 authors = ["Informal Systems <hello@informal.systems>"]
 default-run = "quartz-app-transfers-enclave"
+description = """
+"""
 
 [[bin]]
 name = "encrypt"
@@ -21,32 +28,32 @@ async-trait = "0.1.81"
 anyhow = { version = "1.0.86" }
 base64 = "0.22.1"
 clap = { version = "4.1.8", default-features = false, features = [
-  "derive",
-  "std",
+    "derive",
+    "std",
 ] }
 color-eyre = { version = "0.6.2", default-features = false }
 ecies = { version = "0.2.3", default-features = false, features = ["pure"] }
 hex = { version = "0.4.3", default-features = false }
 k256 = { version = "0.13.2", default-features = false, features = [
-  "ecdsa",
-  "alloc",
+    "ecdsa",
+    "alloc",
 ] }
 prost = { version = "0.13.1", default-features = false }
 serde = { version = "1.0.203", default-features = false, features = ["derive"] }
 serde_json = { version = "1.0.94", default-features = false, features = [
-  "alloc",
+    "alloc",
 ] }
 sha2 = { version = "0.10.8", default-features = false }
 reqwest = "0.12.7"
 thiserror = { version = "1.0.49", default-features = false }
 tokio = { version = "1.39.2", default-features = false, features = [
-  "macros",
-  "rt",
+    "macros",
+    "rt",
 ] }
 tonic = { version = "0.12.1", default-features = false, features = [
-  "codegen",
-  "prost",
-  "transport",
+    "codegen",
+    "prost",
+    "transport",
 ] }
 tracing = "0.1.39"
 futures-util = "0.3.30"
@@ -54,29 +61,25 @@ futures-util = "0.3.30"
 # cosmos
 cosmrs = { version = "0.18.0", default-features = false }
 cosmwasm-std = { version = "2.1.1", default-features = false, features = [
-  "std",
+    "std",
 ] }
 tendermint = { version = "=0.38.1", default-features = false }
 tendermint-rpc = { version = "=0.38.1", default-features = false }
 tendermint-light-client = { version = "=0.38.1", default-features = false, features = [
-  "rust-crypto",
+    "rust-crypto",
 ] }
 transfers-contract = { path = "../contracts", default-features = false }
 
 # quartz
-# TODO: Until the repo is public, let's use the relative path
-# quartz-common = { git = "ssh://git@github.com/informalsystems/cycles-quartz.git", features=["full"] }
-# wasmd-client = { git = "ssh://git@github.com/informalsystems/cycles-quartz.git" }
-# tm-prover = { git = "ssh://git@github.com/informalsystems/cycles-quartz.git" }
-cw-client = { path = "../../../crates/utils/cw-client", default-features = false }
-quartz-common = { path = "../../../crates/common", features = ["full"] }
-quartz-tm-prover = { path = "../../../crates/utils/tm-prover", default-features = false }
+cw-client = { version = "0.1.0", default-features = false }
+quartz-common = { version = "0.1.1", features = ["full"] }
+quartz-tm-prover = { version = "0.1.0", default-features = false }
 
 [dev-dependencies]
 cw-multi-test = "2.1.0"
 
 [build-dependencies]
 tonic-build = { version = "0.12.1", default-features = false, features = [
-  "prost",
-  "transport",
+    "prost",
+    "transport",
 ] }

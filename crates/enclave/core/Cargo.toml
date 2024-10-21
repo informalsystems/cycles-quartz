@@ -1,13 +1,18 @@
 [package]
 name = "quartz-enclave-core"
-version.workspace = true
+version = "0.1.1"
 authors.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
-keywords = ["blockchain", "cosmos", "tendermint", "cycles", "quartz"]
+homepage.workspace = true
+categories = ["cryptography::cryptocurrencies", "hardware-support", "wasm"]
+keywords = ["cosmos", "cosmwasm", "cycles", "quartz", "sgx"]
 readme = "README.md"
+description = """
+A Rust framework for building Intel SGX enclaves managed by a CosmWasm contract.
+"""
 
 [features]
 mock-sgx = ["quartz-contract-core/mock-sgx"]
@@ -41,7 +46,7 @@ cosmrs.workspace = true
 cosmwasm-std.workspace = true
 tendermint.workspace = true
 tendermint-light-client.workspace = true
-tendermint-rpc = { workspace = true, features=["websocket-client", "http-client"] }
+tendermint-rpc = { workspace = true, features = ["websocket-client", "http-client"] }
 
 # quartz
 quartz-cw-proof.workspace = true

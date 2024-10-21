@@ -1,6 +1,6 @@
 override the existing name val1 [y/N]: 
 - address: neutron1t4jlep6w6qxzwf58x49uya74x4tfjx4vd7v9a7
-  name: val1
+  name: bob
   pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Are6QBWqMGG3srEdzWj6ulFzX2J9mU5V5BUGDWpPZvzn"}'
   type: local
 

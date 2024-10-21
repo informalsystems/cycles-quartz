@@ -246,7 +246,6 @@ async fn deploy_and_handshake(
         .handle(config)
         .await
         .wrap_err("Could not run `quartz handshake`")?;
-    println!("got here");
     if let Response::Handshake(res) = h_res {
         info!("Handshake complete: {}", res.pub_key);
     }

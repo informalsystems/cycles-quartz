@@ -2,7 +2,7 @@ import { ChainInfo } from '@keplr-wallet/types'
 
 // Neutron local chain definition
 export const localNeutron: ChainInfo = {
-  chainId: 'test-1',
+  chainId: 'testing',
   chainName: 'Local Neutron Testchain',
   rpc: 'http://localhost:26657',
   rest: 'http://localhost:1317',

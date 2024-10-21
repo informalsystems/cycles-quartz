@@ -6,8 +6,13 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
-keywords = ["blockchain", "cosmos", "cosmwasm", "cycles", "quartz"]
+homepage.workspace = true
+categories = ["cryptography::cryptocurrencies", "wasm"]
+keywords = ["cosmos", "cosmwasm", "cycles", "quartz", "sgx"]
 readme = "README.md"
+description = """
+A CosmWasm framework for securely interacting with Intel SGX enclaves.
+"""
 
 [features]
 default = []
