@@ -14,7 +14,7 @@ use quartz_common::{
     },
     enclave::{
         attestor::Attestor,
-        server::{IntoServer, ProofOfPublication, WsListenerConfig},
+        server::{AppService, CoreMsg, IntoServer, ProofOfPublication, WsListenerConfig},
     },
 };
 use serde::{Deserialize, Serialize};
@@ -39,12 +39,19 @@ impl<A: Attestor> IntoServer for TransfersService<A> {
     }
 }
 
+impl<A: Attestor> AppService for TransfersService<A> {
+    fn accept_channel(&mut self, tx: Sender<CoreMsg>) {
+        self.tx = Some(tx);
+    }
+}
+
 pub type RawCipherText = HexBinary;
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
 pub struct UpdateRequestMessage {
     pub state: HexBinary,
     pub requests: Vec<TransfersRequest>,
+    pub seq_num: u64,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -122,6 +129,8 @@ pub struct TransfersService<A: Attestor> {
     sk: Arc<Mutex<Option<SigningKey>>>,
     attestor: A,
     pub queue_producer: Sender<TransfersOp<A>>,
+    tx: Option<Sender<CoreMsg>>,
+    seq_num: u64,
 }
 
 impl<A> TransfersService<A>
@@ -139,6 +148,8 @@ where
             sk,
             attestor,
             queue_producer,
+            tx: None,
+            seq_num: 0,
         }
     }
 }
@@ -187,6 +198,22 @@ where
         let requests_len = message.requests.len() as u32;
         // Instantiate empty withdrawals map to include in response (Update message to smart contract)
         let mut withdrawals_response: Vec<(Addr, Uint128)> = Vec::<(Addr, Uint128)>::new();
+
+        // make sure number of pending requests are equal to the diff b/w on-chain v/s in-mem seq num
+        let pending_sequenced_requests = message
+            .requests
+            .iter()
+            .filter(|req| matches!(req, TransfersRequest::Transfer(_)))
+            .count();
+
+        if message.seq_num < self.seq_num {
+            return Err(Status::failed_precondition("replay attempted"));
+        }
+
+        let seq_num_diff = message.seq_num - self.seq_num;
+        if seq_num_diff != pending_sequenced_requests {
+            return Err(Status::failed_precondition("seq_num_diff mismatch"));
+        }
 
         // Loop through requests, match on cases, and apply changes to state
         for req in message.requests {

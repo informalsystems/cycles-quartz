@@ -106,7 +106,7 @@ impl CwClient for CliClient {
         Ok(query_result)
     }
 
-    fn query_raw<R: DeserializeOwned + Default>(
+    async fn query_raw<R: DeserializeOwned + Default>(
         &self,
         contract: &Self::Address,
         query: Self::RawQuery,

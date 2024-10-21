@@ -43,6 +43,7 @@ use tendermint_rpc::{
     query::{EventType, Query},
     SubscriptionClient, WebSocketClient,
 };
+use tokio::sync::mpsc::{channel, Receiver, Sender};
 use tonic::{
     body::BoxBody,
     codegen::http,
@@ -96,10 +97,20 @@ pub trait IntoServer {
     fn into_server(self) -> Self::Server;
 }
 
+#[derive(Debug, Clone)]
+pub enum CoreMsg {
+    GetSequenceNumber,
+}
+pub trait AppService {
+    fn accept_channel(&mut self, tx: Sender<CoreMsg>);
+}
+
 pub struct QuartzServer {
     pub router: Router,
     ws_handlers: Vec<Box<dyn WebSocketHandler>>,
     pub ws_config: WsListenerConfig,
+    tx: Sender<CoreMsg>,
+    rx: Receiver<CoreMsg>,
 }
 
 impl QuartzServer {
@@ -114,16 +125,20 @@ impl QuartzServer {
     {
         let core_service = CoreServer::new(CoreService::new(config, sk.clone(), attestor.clone()));
 
+        let (tx, rx) = channel::<CoreMsg>(32);
+
         Self {
             router: Server::builder().add_service(core_service),
             ws_handlers: Vec::new(),
             ws_config,
+            tx,
+            rx,
         }
     }
 
-    pub fn add_service<S>(mut self, service: S) -> Self
+    pub fn add_service<S>(mut self, mut service: S) -> Self
     where
-        S: IntoServer + WebSocketHandler + Clone,
+        S: IntoServer + WebSocketHandler + Clone + AppService,
         S::Server: Service<
                 http::request::Request<BoxBody>,
                 Response = http::response::Response<BoxBody>,
@@ -136,18 +151,27 @@ impl QuartzServer {
     {
         self.ws_handlers.push(Box::new(service.clone()));
 
-        let tonic_server = service.into_server();
+        let tonic_server = {
+            service.accept_channel(self.tx.clone());
+            service.into_server()
+        };
         self.router = self.router.add_service(tonic_server);
 
         self
     }
 
-    pub async fn serve(self, addr: SocketAddr) -> Result<(), QuartzError> {
+    pub async fn serve(mut self, addr: SocketAddr) -> Result<(), QuartzError> {
         // Launch all WebSocket handlers as separate Tokio tasks
         tokio::spawn(async move {
             if let Err(e) = Self::websocket_events_listener(&self.ws_handlers, self.ws_config).await
             {
                 eprintln!("Error in WebSocket event handler: {:?}", e);
+            }
+        });
+
+        tokio::spawn(async move {
+            while let Some(msg) = self.rx.recv().await {
+                todo!("{:?}", msg)
             }
         });
 

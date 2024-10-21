@@ -22,7 +22,7 @@ pub trait CwClient {
         query: Self::Query,
     ) -> Result<R, Self::Error>;
 
-    fn query_raw<R: DeserializeOwned + Default>(
+    async fn query_raw<R: DeserializeOwned + Default>(
         &self,
         contract: &Self::Address,
         query: Self::RawQuery,
