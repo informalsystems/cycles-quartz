@@ -19,6 +19,8 @@ pub enum Error {
     TcbInfoQueryError(String),
     #[error("DCAP verification query error: {0}")]
     DcapVerificationQueryError(String),
+    #[error("contract address mismatch")]
+    ContractAddrMismatch,
 }
 
 impl From<K256Error> for Error {

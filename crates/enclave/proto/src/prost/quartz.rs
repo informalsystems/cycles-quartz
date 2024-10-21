@@ -6,8 +6,11 @@ pub struct InstantiateResponse {
     #[prost(string, tag = "1")]
     pub message: ::prost::alloc::string::String,
 }
-#[derive(Clone, Copy, PartialEq, ::prost::Message)]
-pub struct SessionCreateRequest {}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SessionCreateRequest {
+    #[prost(string, tag = "1")]
+    pub message: ::prost::alloc::string::String,
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SessionCreateResponse {
     #[prost(string, tag = "1")]

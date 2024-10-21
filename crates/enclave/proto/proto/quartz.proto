@@ -14,7 +14,9 @@ message InstantiateResponse {
   string message = 1;
 }
 
-message SessionCreateRequest {}
+message SessionCreateRequest {
+  string message = 1;
+}
 
 message SessionCreateResponse {
   string message = 1;

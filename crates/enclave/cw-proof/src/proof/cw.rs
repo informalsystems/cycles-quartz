@@ -79,6 +79,12 @@ pub struct RawCwProof {
     proof: ProofOps,
 }
 
+impl RawCwProof {
+    pub fn key(&self) -> &[u8] {
+        self.key.as_ref()
+    }
+}
+
 impl From<RawCwProof> for CwProof {
     fn from(RawCwProof { key, value, proof }: RawCwProof) -> Self {
         Self {
