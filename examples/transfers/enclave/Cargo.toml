@@ -83,3 +83,8 @@ tonic-build = { version = "0.12.1", default-features = false, features = [
     "prost",
     "transport",
 ] }
+
+[patch.crates-io]
+cw-client = { path = "../../../crates/utils/cw-client" }
+quartz-common = { path = "../../../crates/common" }
+quartz-tm-prover = { path = "../../../crates/utils/tm-prover" }

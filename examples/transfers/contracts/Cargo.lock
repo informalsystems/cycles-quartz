@@ -1316,8 +1316,6 @@ dependencies = [
 [[package]]
 name = "quartz-common"
 version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ede21ada6835cd4f0982988c6987099707c82ef2d41ca460424164b139da039d"
 dependencies = [
  "quartz-contract-core",
 ]
@@ -1325,8 +1323,6 @@ dependencies = [
 [[package]]
 name = "quartz-contract-core"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bba4ce403201fecbea60e7fccd8624fb3f8a62c29ec4eae280a9e20ec7fdc273"
 dependencies = [
  "ciborium",
  "cosmwasm-schema",
@@ -1347,8 +1343,6 @@ dependencies = [
 [[package]]
 name = "quartz-dcap-verifier-msgs"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2a6e9adb2e1877aa743947f021bebb9dffcee248e1ecb469acdda9c7fd0342fb"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
@@ -1357,8 +1351,6 @@ dependencies = [
 [[package]]
 name = "quartz-tcbinfo-msgs"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "addfd5be75e367b1e2a1da5dd9c2ee7b75527ccc02e29ce3df701f54387f8732"
 dependencies = [
  "cosmwasm-schema",
 ]
@@ -1366,8 +1358,6 @@ dependencies = [
 [[package]]
 name = "quartz-tee-ra"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "42bbe5f9eaf06430360b7bc0d5e1d0941b7aa720f6241088cd012321f69b0b52"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",

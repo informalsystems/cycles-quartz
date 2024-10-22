@@ -1293,9 +1293,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tendermint",
- "tokio",
  "tonic",
- "transfers-contract",
 ]
 
 [[package]]
@@ -4257,21 +4255,12 @@ dependencies = [
 name = "quartz-common"
 version = "0.1.1"
 dependencies = [
- "quartz-contract-core 0.1.0",
+ "quartz-contract-core",
  "quartz-enclave-core",
  "quartz-proto",
 ]
 
 [[package]]
-name = "quartz-common"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ede21ada6835cd4f0982988c6987099707c82ef2d41ca460424164b139da039d"
-dependencies = [
- "quartz-contract-core 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "quartz-contract-core"
 version = "0.1.0"
 dependencies = [
@@ -4281,31 +4270,9 @@ dependencies = [
  "cw-storage-plus",
  "hex",
  "k256",
- "quartz-dcap-verifier-msgs 0.1.0",
- "quartz-tcbinfo-msgs 0.1.0",
- "quartz-tee-ra 0.1.0",
- "serde",
- "serde_json",
- "serde_with",
- "sha2 0.10.8",
- "thiserror",
-]
-
-[[package]]
-name = "quartz-contract-core"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bba4ce403201fecbea60e7fccd8624fb3f8a62c29ec4eae280a9e20ec7fdc273"
-dependencies = [
- "ciborium",
- "cosmwasm-schema",
- "cosmwasm-std",
- "cw-storage-plus",
- "hex",
- "k256",
- "quartz-dcap-verifier-msgs 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "quartz-tcbinfo-msgs 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "quartz-tee-ra 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "quartz-dcap-verifier-msgs",
+ "quartz-tcbinfo-msgs",
+ "quartz-tee-ra",
  "serde",
  "serde_json",
  "serde_with",
@@ -4351,23 +4318,13 @@ dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
  "getrandom",
- "quartz-dcap-verifier-msgs 0.1.0",
- "quartz-tee-ra 0.1.0",
+ "quartz-dcap-verifier-msgs",
+ "quartz-tee-ra",
 ]
 
 [[package]]
 name = "quartz-dcap-verifier-msgs"
 version = "0.1.0"
-dependencies = [
- "cosmwasm-schema",
- "cosmwasm-std",
-]
-
-[[package]]
-name = "quartz-dcap-verifier-msgs"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2a6e9adb2e1877aa743947f021bebb9dffcee248e1ecb469acdda9c7fd0342fb"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
@@ -4388,10 +4345,10 @@ dependencies = [
  "hex",
  "k256",
  "mc-sgx-dcap-sys-types",
- "quartz-contract-core 0.1.0",
+ "quartz-contract-core",
  "quartz-cw-proof",
  "quartz-proto",
- "quartz-tee-ra 0.1.0",
+ "quartz-tee-ra",
  "quartz-tm-stateless-verifier",
  "rand",
  "reqwest 0.12.8",
@@ -4452,8 +4409,8 @@ dependencies = [
  "miette",
  "once_cell",
  "prost",
- "quartz-common 0.1.1",
- "quartz-tee-ra 0.1.0",
+ "quartz-common",
+ "quartz-tee-ra",
  "quartz-tm-prover",
  "regex",
  "reqwest 0.12.8",
@@ -4492,8 +4449,8 @@ dependencies = [
  "hex",
  "mc-attestation-verifier",
  "p256",
- "quartz-tcbinfo-msgs 0.1.0",
- "quartz-tee-ra 0.1.0",
+ "quartz-tcbinfo-msgs",
+ "quartz-tee-ra",
  "schemars",
  "serde",
  "serde_json",
@@ -4504,15 +4461,6 @@ dependencies = [
 [[package]]
 name = "quartz-tcbinfo-msgs"
 version = "0.1.0"
-dependencies = [
- "cosmwasm-schema",
-]
-
-[[package]]
-name = "quartz-tcbinfo-msgs"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "addfd5be75e367b1e2a1da5dd9c2ee7b75527ccc02e29ce3df701f54387f8732"
 dependencies = [
  "cosmwasm-schema",
 ]
@@ -4529,27 +4477,6 @@ dependencies = [
  "mc-attestation-verifier",
  "mc-sgx-core-types",
  "mc-sgx-dcap-sys-types",
- "mc-sgx-dcap-types",
- "num-bigint",
- "serde",
- "serde_json",
- "sha2 0.10.8",
- "thiserror",
- "x509-cert",
- "x509-parser",
-]
-
-[[package]]
-name = "quartz-tee-ra"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "42bbe5f9eaf06430360b7bc0d5e1d0941b7aa720f6241088cd012321f69b0b52"
-dependencies = [
- "cosmwasm-schema",
- "cosmwasm-std",
- "der",
- "hex-literal",
- "mc-attestation-verifier",
  "mc-sgx-dcap-types",
  "num-bigint",
  "serde",
@@ -6236,21 +6163,6 @@ dependencies = [
  "thread_local",
  "tracing",
  "tracing-core",
-]
-
-[[package]]
-name = "transfers-contract"
-version = "0.1.0"
-dependencies = [
- "cosmwasm-schema",
- "cosmwasm-std",
- "cw-storage-plus",
- "cw-utils",
- "getrandom",
- "quartz-common 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde_json",
- "sha2 0.10.8",
- "thiserror",
 ]
 
 [[package]]

@@ -31,7 +31,3 @@ tonic.workspace = true
 cosmrs = { workspace = true, default-features = false, features = ["cosmwasm"] }
 cosmos-sdk-proto = { workspace = true, default-features = false, features = ["grpc", "grpc-transport"] }
 tendermint = { workspace = true, default-features = false }
-
-[dev-dependencies]
-tokio.workspace = true
-transfers-contract = { path = "../../../examples/transfers/contracts" }
