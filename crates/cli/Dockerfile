@@ -49,7 +49,8 @@ RUN apt-get remove -y wget && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Create a directory for the app
-RUN mkdir -p /opt/examples/transfers
+# Create an out-ot-tree transfers sample app
+RUN cd / && \
+    USER=root quartz init
 
-ENTRYPOINT ["quartz", "--mock-sgx", "--app-dir", "/opt/examples/transfers", "dev", "--unsafe-trust-latest", "--contract-manifest", "/opt/examples/transfers/contracts/Cargo.toml", "--init-msg", "{\"denom\":\"untrn\"}"]
+ENTRYPOINT ["quartz", "--mock-sgx", "--app-dir", "/quartz_app", "dev", "--unsafe-trust-latest", "--contract-manifest", "/quartz_app/contracts/Cargo.toml", "--init-msg", "{\"denom\":\"untrn\"}"]
