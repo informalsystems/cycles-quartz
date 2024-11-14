@@ -1,0 +1,9 @@
+[submodule "crates/evm/hello_foundry/lib/forge-std"]
+	path = crates/evm/hello_foundry/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "crates/evm/contracts/lib/forge-std"]
+	path = crates/evm/contracts/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "crates/evm/contracts/lib/automata-dcap-attestation"]
+	path = crates/evm/contracts/lib/automata-dcap-attestation
+	url = https://github.com/automata-network/automata-dcap-attestation

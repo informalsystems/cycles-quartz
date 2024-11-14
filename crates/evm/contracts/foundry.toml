@@ -1,0 +1,11 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+
+[rpc_endpoints]
+sepolia = "${RPC_URL_SEPOLIA}"
+
+[profile.sepolia]
+url = "${RPC_URL_SEPOLIA}"
+private_key = "${SEPOLIA_PRIV_KEY}"
