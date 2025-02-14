@@ -87,9 +87,12 @@ where
             serde_json::from_str(&message).map_err(|e| Status::invalid_argument(e.to_string()))?
         };
 
-        let contract = self.contract.lock().unwrap().clone().ok_or_else(|| {
-            Status::failed_precondition("Contract address is not set")
-        })?;
+        let contract = self
+            .contract
+            .lock()
+            .unwrap()
+            .clone()
+            .ok_or_else(|| Status::failed_precondition("Contract address is not set"))?;
         let (proof_value, ping) = message
             .verify(
                 self.config.light_client_opts(),

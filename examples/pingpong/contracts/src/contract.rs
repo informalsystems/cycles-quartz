@@ -2,7 +2,7 @@ use cosmwasm_std::{
     entry_point, to_json_binary, Binary, Deps, DepsMut, Env, Event, MessageInfo, Response,
     StdResult,
 };
-use quartz_common::contract::handler::RawHandler;
+use quartz_contract_core::handler::RawHandler;
 
 use crate::{
     error::ContractError,

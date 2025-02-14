@@ -26,7 +26,7 @@ incremental = false
 overflow-checks = true
 
 [features]
-mock-sgx = ["quartz-common/mock-sgx-cw"]
+mock-sgx = ["quartz-contract-core/mock-sgx"]
 library = []
 
 [dependencies]
@@ -44,9 +44,8 @@ cw-storage-plus = { version = "2.0.0", default-features = false, features = ["it
 cw-utils = { version = "2.0.0", default-features = false }
 
 # quartz
-# TODO: Until the repo is public, let's use the relative path
-# quartz-common = { git = "ssh://git@github.com/informalsystems/cycles-quartz.git", features=["contract"]}
-quartz-common = { path = "../../../crates/common", features = ["contract"] }
+quartz-contract-core = { path = "../../../crates/contracts/core" }
+quartz-contract-core-derive = { path = "../../../crates/contracts/core/derive" }
 
 # patch indirect deps
 getrandom = { version = "0.2.15", features = ["js"] }

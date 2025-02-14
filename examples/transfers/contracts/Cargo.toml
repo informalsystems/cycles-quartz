@@ -31,7 +31,7 @@ incremental = false
 overflow-checks = true
 
 [features]
-mock-sgx = ["quartz-common/mock-sgx-cw"]
+mock-sgx = ["quartz-contract-core/mock-sgx"]
 library = []
 
 [dependencies]
@@ -49,7 +49,8 @@ cw-storage-plus = { version = "2.0.0", default-features = false }
 cw-utils = { version = "2.0.0", default-features = false }
 
 # quartz
-quartz-common = { version = "0.1.1", features = ["contract"] }
+quartz-contract-core = { path = "../../../crates/contracts/core" }
+quartz-contract-core-derive = { path = "../../../crates/contracts/core/derive" }
 
 # patch indirect deps
 getrandom = { version = "0.2.15", features = ["js"] }
@@ -57,6 +58,3 @@ getrandom = { version = "0.2.15", features = ["js"] }
 [dev-dependencies]
 cw-multi-test = { version = "2.1.0", default-features = false }
 serde_json = "1.0.122"
-
-[patch.crates-io]
-quartz-common = { path = "../../../crates/common" }

@@ -9,7 +9,7 @@ use ping_pong_contract::msg::{
     AttestedMsg, ExecuteMsg,
 };
 use quartz_common::{
-    contract::msg::execute::attested::{RawAttested, RawMsgSansHandler},
+    contract::msg::execute::attested::{RawAttested, RawNoop},
     enclave::{
         attestor::Attestor,
         server::{WebSocketHandler, WsListenerConfig},
@@ -187,7 +187,7 @@ where
     // Build on-chain response
     // TODO add non-mock support
     let pong_msg = ExecuteMsg::Pong(AttestedMsg {
-        msg: RawMsgSansHandler(attested.msg),
+        msg: RawNoop(attested.msg),
         attestation: attested.attestation,
     });
 

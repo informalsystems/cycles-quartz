@@ -4,6 +4,7 @@ members = [
     "crates/cli",
     "crates/common",
     "crates/contracts/*",
+    "crates/contracts/core/derive",
     "crates/enclave/*",
     "crates/utils/*",
 ]
@@ -128,6 +129,7 @@ mc-attestation-verifier = { version = "0.4.3", default-features = false }
 quartz-cw-proof = { version = "0.1.0", path = "crates/enclave/cw-proof", default-features = false }
 quartz-common = { version = "0.1.0", path = "crates/common", default-features = false }
 quartz-contract-core = { version = "0.1.0", path = "crates/contracts/core", default-features = false }
+quartz-contract-core-derive = { version = "0.1.0", path = "crates/contracts/core/derive", default-features = false }
 quartz-dcap-verifier-msgs = { version = "0.1.0", path = "crates/contracts/dcap-verifier/msgs", default-features = false }
 quartz-enclave-core = { version = "0.1.1", path = "crates/enclave/core", default-features = false }
 quartz-proto = { version = "0.1.0", path = "crates/enclave/proto", default-features = false }

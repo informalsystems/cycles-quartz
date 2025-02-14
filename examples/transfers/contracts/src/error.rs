@@ -1,6 +1,6 @@
 use cosmwasm_std::StdError;
 use cw_utils::PaymentError;
-use quartz_common::contract::error::Error as QuartzError;
+use quartz_contract_core::error::Error as QuartzError;
 use thiserror::Error;
 
 #[derive(Error, Debug)]

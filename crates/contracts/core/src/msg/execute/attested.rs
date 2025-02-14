@@ -222,16 +222,16 @@ impl Attestation for MockAttestation {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct MsgSansHandler<T>(pub T);
+pub struct Noop<T>(pub T);
 
 #[cw_serde]
-pub struct RawMsgSansHandler<T>(pub T);
+pub struct RawNoop<T>(pub T);
 
-impl<T: Serialize> HasDomainType for RawMsgSansHandler<T> {
-    type DomainType = MsgSansHandler<T>;
+impl<T: Serialize> HasDomainType for RawNoop<T> {
+    type DomainType = Noop<T>;
 }
 
-impl<T> HasUserData for MsgSansHandler<T>
+impl<T> HasUserData for Noop<T>
 where
     T: HasUserData,
 {
@@ -240,16 +240,16 @@ where
     }
 }
 
-impl<T> TryFrom<RawMsgSansHandler<T>> for MsgSansHandler<T> {
+impl<T> TryFrom<RawNoop<T>> for Noop<T> {
     type Error = StdError;
 
-    fn try_from(value: RawMsgSansHandler<T>) -> Result<Self, Self::Error> {
+    fn try_from(value: RawNoop<T>) -> Result<Self, Self::Error> {
         Ok(Self(value.0))
     }
 }
 
-impl<T> From<MsgSansHandler<T>> for RawMsgSansHandler<T> {
-    fn from(value: MsgSansHandler<T>) -> Self {
+impl<T> From<Noop<T>> for RawNoop<T> {
+    fn from(value: Noop<T>) -> Self {
         Self(value.0)
     }
 }

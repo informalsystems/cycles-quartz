@@ -1,0 +1,26 @@
+[package]
+name = "quartz-contract-core-derive"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories = ["cryptography::cryptocurrencies", "wasm"]
+keywords = ["cosmos", "cosmwasm", "cycles", "quartz", "sgx"]
+readme = "README.md"
+description = """
+Derive macros for Quartz contracts.
+"""
+
+[dependencies]
+proc-macro2 = "1.0"
+quartz-contract-core.workspace = true
+quote = "1.0"
+serde_json.workspace = true
+sha2.workspace = true
+syn = { version = "1.0", features = ["full"] }
+
+[lib]
+proc-macro = true

@@ -7,7 +7,7 @@ use cw_client::{CwClient, GrpcClient};
 use futures_util::StreamExt;
 use quartz_common::{
     contract::{
-        msg::execute::attested::{RawAttested, RawMsgSansHandler},
+        msg::execute::attested::{RawAttested, RawNoop},
         state::SEQUENCE_NUM_KEY,
     },
     enclave::{
@@ -253,7 +253,7 @@ where
     // Build on-chain response
     // TODO add non-mock support
     let transfer_msg = ExecuteMsg::Update(AttestedMsg {
-        msg: RawMsgSansHandler(attested.msg),
+        msg: RawNoop(attested.msg),
         attestation: attested.attestation,
     });
 
@@ -323,7 +323,7 @@ where
     // Build on-chain response
     // TODO add non-mock support
     let query_msg = ExecuteMsg::QueryResponse(AttestedMsg {
-        msg: RawMsgSansHandler(attested.msg),
+        msg: RawNoop(attested.msg),
         attestation: attested.attestation,
     });
 

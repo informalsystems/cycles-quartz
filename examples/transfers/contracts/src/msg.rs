@@ -1,14 +1,14 @@
 use cosmwasm_schema::cw_serde;
-use quartz_common::contract::{
+use quartz_contract_core::{
     msg::execute::{
-        attested::{RawAttested, RawDefaultAttestation, RawMsgSansHandler},
-        sequenced::RawSequencedMsg,
+        attested::{RawAttested, RawDefaultAttestation, RawNoop},
+        sequenced::RawSequenced,
     },
     prelude::*,
 };
 
-pub type AttestedMsg<M, RA = RawDefaultAttestation> = RawAttested<RawMsgSansHandler<M>, RA>;
-pub type SequencedMsgSansHandler<M> = RawSequencedMsg<RawMsgSansHandler<M>>;
+pub type AttestedMsg<M, RA = RawDefaultAttestation> = RawAttested<RawNoop<M>, RA>;
+pub type SequencedMsg<M> = RawSequenced<RawNoop<M>>;
 
 #[cw_serde]
 pub struct InstantiateMsg<RA = RawDefaultAttestation> {
@@ -35,7 +35,7 @@ pub enum ExecuteMsg<RA = RawDefaultAttestation> {
     Withdraw,
     ClearTextTransferRequest(execute::ClearTextTransferRequestMsg),
     // ciphertext
-    TransferRequest(SequencedMsgSansHandler<execute::TransferRequestMsg>),
+    TransferRequest(SequencedMsg<execute::TransferRequestMsg>),
     QueryRequest(execute::QueryRequestMsg),
 
     // Enclave msgs
@@ -46,8 +46,7 @@ pub enum ExecuteMsg<RA = RawDefaultAttestation> {
 pub mod execute {
     use cosmwasm_schema::cw_serde;
     use cosmwasm_std::{Addr, HexBinary, Uint128};
-    use quartz_common::contract::{msg::execute::attested::HasUserData, state::UserData};
-    use sha2::{Digest, Sha256};
+    use quartz_contract_core_derive::UserData;
 
     #[cw_serde]
     pub struct ClearTextTransferRequestMsg {
@@ -76,6 +75,7 @@ pub mod execute {
         Deposit(Addr, Uint128),
     }
 
+    #[derive(UserData)]
     #[cw_serde]
     pub struct UpdateMsg {
         pub ciphertext: HexBinary,
@@ -84,34 +84,11 @@ pub mod execute {
         // pub proof: π
     }
 
-    impl HasUserData for UpdateMsg {
-        fn user_data(&self) -> UserData {
-            let mut hasher = Sha256::new();
-            hasher.update(serde_json::to_string(&self).expect("infallible serializer"));
-            let digest: [u8; 32] = hasher.finalize().into();
-
-            let mut user_data = [0u8; 64];
-            user_data[0..32].copy_from_slice(&digest);
-            user_data
-        }
-    }
-
+    #[derive(UserData)]
     #[cw_serde]
     pub struct QueryResponseMsg {
         pub address: Addr,
         pub encrypted_bal: HexBinary,
         // pub proof: π
-    }
-
-    impl HasUserData for QueryResponseMsg {
-        fn user_data(&self) -> UserData {
-            let mut hasher = Sha256::new();
-            hasher.update(serde_json::to_string(&self).expect("infallible serializer"));
-            let digest: [u8; 32] = hasher.finalize().into();
-
-            let mut user_data = [0u8; 64];
-            user_data[0..32].copy_from_slice(&digest);
-            user_data
-        }
     }
 }

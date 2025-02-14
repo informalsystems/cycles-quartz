@@ -2685,6 +2685,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "quartz-contract-core-derive"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quartz-contract-core",
+ "quote",
+ "serde_json",
+ "sha2 0.10.8",
+ "syn 1.0.109",
+]
+
+[[package]]
 name = "quartz-cw-proof"
 version = "0.1.0"
 dependencies = [
@@ -4244,7 +4256,8 @@ dependencies = [
  "cw-storage-plus",
  "cw-utils",
  "getrandom",
- "quartz-common",
+ "quartz-contract-core",
+ "quartz-contract-core-derive",
  "serde_json",
  "sha2 0.10.8",
  "thiserror",
