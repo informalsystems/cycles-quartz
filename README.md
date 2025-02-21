@@ -1,3 +1,10 @@
+[![Build Status][build-image]][build-link]
+[![End2End Tests](https://img.shields.io/badge/End2End-passing-brightgreen)](https://github.com/informalsystems/cycles-quartz/actions?query=workflow%3Ae2e-tests)
+[![Integration tests][test-image]][test-link]
+[![Apache 2.0 Licensed][license-image]][license-link]
+![Rust Stable][rustc-image]
+![Rust 1.75+][rustc-version]
+
 # Quartz
 
 Quartz is a flexible framework for privacy-preserving computation via Trusted Execution
@@ -156,3 +163,14 @@ Apache 2.0
 [future_work]: /docs/roadmap.md
 [how_to_win_friends_talk]: https://www.youtube.com/watch?v=XwKIt5XYyqw
 [how_to_win_friends_thread]: https://x.com/buchmanster/status/1816084691784720887
+
+
+[build-image]: https://github.com/informalsystems/hermes/workflows/Rust/badge.svg
+[build-link]: https://github.com/informalsystems/cycles-quartz/actions?query=workflow%3ARust
+[test-image]: https://github.com/informalsystems/hermes/actions/workflows/integration.yaml/badge.svg?branch=master
+[test-link]: https://github.com/informalsystems/cycles-quartz/actions?query=workflow%3A%22Integration%22
+[license-image]: https://img.shields.io/badge/license-Apache_2.0-blue.svg
+[license-link]: https://github.com/informalsystems/cycles-quartz/blob/main/LICENSE
+[rustc-image]: https://img.shields.io/badge/rustc-stable-blue.svg
+[rustc-version]: https://img.shields.io/badge/rustc-1.75.0-blue.svg
+
