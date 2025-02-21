@@ -563,6 +563,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d965446196e3b7decd44aa7ee49e31d630118f90ef12f97900f262eb915c951d"
 
 [[package]]
+name = "bincode"
+version = "2.0.0-rc.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f11ea1a0346b94ef188834a65c068a03aec181c94896d481d7a0a40d85b0ce95"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "bindgen"
 version = "0.66.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3322,9 +3331,9 @@ dependencies = [
 
 [[package]]
 name = "log"
-version = "0.4.22"
+version = "0.4.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a7a70ba024b9dc04c27ea2f0c0548feb474ec5c54bba33a7f72f873a39d07b24"
+checksum = "04cbf5b083de1c7e0222a7a51dbfdba1cbe1c6ab0b15e29fff3f6c077fd9cd9f"
 
 [[package]]
 name = "lru-cache"
@@ -4277,19 +4286,24 @@ version = "0.1.1"
 dependencies = [
  "anyhow",
  "async-trait",
+ "bincode",
  "clap",
  "color-eyre",
  "cosmrs",
  "cosmwasm-std",
+ "cw-client",
+ "displaydoc",
  "ecies",
  "futures-util",
  "hex",
  "k256",
+ "log",
  "mc-sgx-dcap-sys-types",
  "quartz-contract-core",
  "quartz-cw-proof",
  "quartz-proto",
  "quartz-tee-ra",
+ "quartz-tm-prover",
  "quartz-tm-stateless-verifier",
  "rand",
  "reqwest 0.12.8",

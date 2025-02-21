@@ -21,13 +21,16 @@ mock-sgx = ["quartz-contract-core/mock-sgx"]
 # external
 anyhow.workspace = true
 async-trait.workspace = true
+bincode.workspace = true
 sha2 = { workspace = true }
 clap.workspace = true
 color-eyre.workspace = true
+displaydoc.workspace = true
 ecies.workspace = true
 futures-util.workspace = true
 hex.workspace = true
 k256.workspace = true
+log.workspace = true
 rand.workspace = true
 reqwest = { workspace = true, features = ["blocking"] }
 serde.workspace = true
@@ -49,8 +52,10 @@ tendermint-light-client.workspace = true
 tendermint-rpc = { workspace = true, features = ["websocket-client", "http-client"] }
 
 # quartz
+cw-client.workspace = true
 quartz-cw-proof.workspace = true
 quartz-contract-core.workspace = true
 quartz-proto.workspace = true
+quartz-tm-prover.workspace = true
 quartz-tee-ra.workspace = true
 quartz-tm-stateless-verifier.workspace = true
