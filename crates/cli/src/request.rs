@@ -59,9 +59,9 @@ impl TryFrom<Command> for Request {
                     init_msg: serde_json::from_str(&args.contract_deploy.init_msg)?,
                     label: args.contract_deploy.label,
                     release: args.enclave_build.release,
-                    fmspc: args.fmspc,
-                    tcbinfo_contract: args.tcbinfo_contract,
-                    dcap_verifier_contract: args.dcap_verifier_contract,
+                    fmspc: args.sgx_conf.fmspc,
+                    tcbinfo_contract: args.sgx_conf.tcbinfo_contract,
+                    dcap_verifier_contract: args.sgx_conf.dcap_verifier_contract,
                 }
                 .into())
             }
@@ -115,9 +115,9 @@ impl TryFrom<EnclaveCommand> for Request {
             EnclaveCommand::Build(_) => Ok(EnclaveBuildRequest {}.into()),
             EnclaveCommand::Start(args) => Ok(EnclaveStartRequest {
                 unsafe_trust_latest: args.unsafe_trust_latest,
-                fmspc: args.fmspc,
-                tcbinfo_contract: args.tcbinfo_contract,
-                dcap_verifier_contract: args.dcap_verifier_contract,
+                fmspc: args.sgx_conf.fmspc,
+                tcbinfo_contract: args.sgx_conf.tcbinfo_contract,
+                dcap_verifier_contract: args.sgx_conf.dcap_verifier_contract,
             }
             .into()),
         }

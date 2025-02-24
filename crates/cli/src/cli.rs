@@ -215,18 +215,10 @@ pub struct EnclaveBuildArgs {
     pub release: bool,
 }
 
+/// SGX-specific configuration. Required if `MOCK_SGX` is not set.
 #[derive(Debug, Parser, Clone, Serialize, Deserialize)]
-pub struct EnclaveStartArgs {
-    /// The network chain ID
-    #[arg(long)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub chain_id: Option<ChainId>,
-
-    /// Fetch latest trusted hash and height from the chain instead of existing configuration
-    #[arg(long)]
-    pub unsafe_trust_latest: bool,
-
-    /// FMSPC (Family-Model-Stepping-Platform-Custom SKU); required if `MOCK_SGX` is not set
+pub struct SgxConfiguration {
+    /// FMSPC (Family-Model-Stepping-Platform-Custom SKU)
     #[arg(long)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub fmspc: Option<Fmspc>,
@@ -240,6 +232,39 @@ pub struct EnclaveStartArgs {
     #[arg(long)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub dcap_verifier_contract: Option<AccountId>,
+}
+
+impl SgxConfiguration {
+    fn validate(&self) -> Result<(), String> {
+        if std::env::var("MOCK_SGX").is_err() {
+            self.check_required_field(&self.fmspc, "FMSPC")?;
+            self.check_required_field(&self.tcbinfo_contract, "tcbinfo_contract")?;
+            self.check_required_field(&self.dcap_verifier_contract, "dcap_verifier_contract")?;
+        }
+        Ok(())
+    }
+
+    fn check_required_field<T>(&self, field: &Option<T>, field_name: &str) -> Result<(), String> {
+        if field.is_none() {
+            return Err(format!("{} is required if MOCK_SGX isn't set", field_name));
+        }
+        Ok(())
+    }
+}
+
+#[derive(Debug, Parser, Clone, Serialize, Deserialize)]
+pub struct EnclaveStartArgs {
+    /// The network chain ID
+    #[arg(long)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub chain_id: Option<ChainId>,
+
+    /// Fetch latest trusted hash and height from the chain instead of existing configuration
+    #[arg(long)]
+    pub unsafe_trust_latest: bool,
+
+    #[command(flatten)]
+    pub sgx_conf: SgxConfiguration,
 
     /// Whether to target release or dev
     #[arg(long)]
@@ -263,20 +288,8 @@ pub struct DevArgs {
     #[command(flatten)]
     pub enclave_build: EnclaveBuildArgs,
 
-    /// FMSPC (Family-Model-Stepping-Platform-Custom SKU); required if `MOCK_SGX` is not set
-    #[arg(long)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub fmspc: Option<Fmspc>,
-
-    /// Address of the TcbInfo contract
-    #[arg(long)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub tcbinfo_contract: Option<AccountId>,
-
-    /// Address of the DCAP verifier contract
-    #[arg(long)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub dcap_verifier_contract: Option<AccountId>,
+    #[command(flatten)]
+    pub sgx_conf: SgxConfiguration,
 }
 
 pub trait ToFigment {
@@ -301,5 +314,58 @@ impl ToFigment for Command {
                 .merge(Serialized::defaults(&args.enclave_build)),
             Command::PrintFmspc => Figment::default(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::env;
+
+    #[test]
+    fn test_sgx_configuration_with_mock_sgx() {
+        env::set_var("MOCK_SGX", "1");
+
+        let sgx_conf = SgxConfiguration {
+            fmspc: None,
+            tcbinfo_contract: None,
+            dcap_verifier_contract: None,
+        };
+
+        assert!(sgx_conf.validate().is_ok());
+    }
+
+    #[test]
+    fn test_sgx_configuration_without_mock_sgx() {
+        env::remove_var("MOCK_SGX");
+
+        let sgx_conf = SgxConfiguration {
+            fmspc: Some("00906ED50000".parse().unwrap()),
+            tcbinfo_contract: Some(
+                "neutron1anj45ushmjntew7zrg5jw2rv0rwfce3nl5d655mzzg8st0qk4wjsds4wps"
+                    .parse()
+                    .unwrap(),
+            ),
+            dcap_verifier_contract: Some(
+                "neutron18f3xu4yazfqr48wla9dwr7arn8wfm57qfw8ll6y02qsgmftpft6qfec3uf"
+                    .parse()
+                    .unwrap(),
+            ),
+        };
+
+        assert!(sgx_conf.validate().is_ok());
+    }
+
+    #[test]
+    fn test_sgx_configuration_without_mock_sgx_missing_fields() {
+        env::remove_var("MOCK_SGX");
+
+        let sgx_conf = SgxConfiguration {
+            fmspc: None,
+            tcbinfo_contract: None,
+            dcap_verifier_contract: None,
+        };
+
+        assert!(sgx_conf.validate().is_err());
     }
 }
