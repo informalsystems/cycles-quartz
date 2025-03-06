@@ -47,13 +47,13 @@ tracing = "0.1.39"
 futures-util = "0.3.30"
 
 # cosmos
-cosmrs = { version = "0.18.0", default-features = false, features = ["getrandom"]}
+cosmrs = { version = "0.21.1", default-features = false, features = ["getrandom"]}
 cosmwasm-std = { version = "2.1.1", default-features = false, features = [
   "std",
 ] }
-tendermint = { version = "=0.38.1", default-features = false }
-tendermint-rpc = { version = "=0.38.1", default-features = false }
-tendermint-light-client = { version = "=0.38.1", default-features = false, features = [
+tendermint = { version = "=0.40.1", default-features = false }
+tendermint-rpc = { version = "=0.40.1", default-features = false }
+tendermint-light-client = { version = "=0.40.1", default-features = false, features = [
   "rust-crypto",
 ] }
 ping-pong-contract = { path = "../contracts", default-features = false }

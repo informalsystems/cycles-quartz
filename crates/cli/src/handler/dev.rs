@@ -20,7 +20,7 @@ use crate::{
         handshake::HandshakeRequest,
     },
     response::{dev::DevResponse, Response},
-    Config, BANNER,
+    Config,
 };
 
 #[async_trait]
