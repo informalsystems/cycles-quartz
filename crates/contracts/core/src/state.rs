@@ -1,7 +1,6 @@
 use cosmwasm_schema::cw_serde;
 use cosmwasm_std::{HexBinary, StdError, Uint64};
 use cw_storage_plus::Item;
-use k256::ecdsa::VerifyingKey;
 
 pub type MrEnclave = [u8; 32];
 pub type Nonce = [u8; 32];
@@ -233,9 +232,9 @@ impl Session {
         }
     }
 
-    pub fn with_pub_key(mut self, nonce: Nonce, pub_key: VerifyingKey) -> Option<Self> {
+    pub fn with_pub_key(mut self, nonce: Nonce, pub_key: Vec<u8>) -> Option<Self> {
         if self.nonce == nonce && self.pub_key.is_none() {
-            self.pub_key = Some(pub_key.to_sec1_bytes().into_vec().into());
+            self.pub_key = Some(pub_key.into());
             Some(self)
         } else {
             None
