@@ -1,8 +1,6 @@
 use cosmwasm_std::{Addr, HexBinary, Uint128};
 use k256::ecdsa::VerifyingKey;
-use quartz_common::enclave::{
-    handler::Handler, key_manager::KeyManager, DefaultSharedEnclave,
-};
+use quartz_common::enclave::{handler::Handler, key_manager::KeyManager, DefaultSharedEnclave};
 use serde::{Deserialize, Serialize};
 use tonic::Status;
 use transfers_contract::msg::execute;

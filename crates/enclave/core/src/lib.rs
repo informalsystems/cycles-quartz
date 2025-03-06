@@ -68,7 +68,10 @@ impl<C: Send + Sync + 'static> DefaultSharedEnclave<C> {
         }
     }
 
-    pub fn with_key_manager<K: KeyManager>(self, key_manager: K) -> DefaultEnclave<C, <Self as Enclave>::Attestor, K, <Self as Enclave>::Store> {
+    pub fn with_key_manager<K: KeyManager>(
+        self,
+        key_manager: K,
+    ) -> DefaultEnclave<C, <Self as Enclave>::Attestor, K, <Self as Enclave>::Store> {
         DefaultEnclave {
             attestor: self.attestor,
             key_manager,
