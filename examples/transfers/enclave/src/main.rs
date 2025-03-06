@@ -13,36 +13,47 @@
 )]
 
 pub mod cli;
+pub mod event;
+pub mod grpc;
 pub mod proto;
+pub mod request;
 pub mod state;
-pub mod transfers_server;
-pub mod wslistener;
-
-use std::sync::{Arc, Mutex};
 
 use clap::Parser;
 use cli::Cli;
 use quartz_common::{
     contract::state::{Config, LightClientOpts},
     enclave::{
-        attestor::{self, Attestor, DefaultAttestor},
-        server::{QuartzServer, WsListenerConfig},
+        attestor::{self, Attestor},
+        chain_client::default::{DefaultChainClient, DefaultTxConfig},
+        host::{DefaultHost, Host},
+        DefaultSharedEnclave,
     },
+    proto::core_server::CoreServer,
 };
-use tokio::sync::mpsc;
-use transfers_server::{TransfersOp, TransfersService};
+use tonic::transport::Server;
 
-use crate::wslistener::WsListener;
+use crate::{
+    event::EnclaveEvent,
+    proto::settlement_server::SettlementServer,
+    request::{EnclaveRequest, EnclaveResponse},
+};
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Cli::parse();
 
-    let admin_sk = std::env::var("ADMIN_SK")
-        .map_err(|_| anyhow::anyhow!("Admin secret key not found in env vars"))?;
+    let sk = {
+        let sk = std::env::var("ADMIN_SK")
+            .map_err(|_| anyhow::anyhow!("Admin secret key not found in env vars"))?;
+        hex::decode(sk)?
+            .as_slice()
+            .try_into()
+            .map_err(|e| anyhow::anyhow!("failed to read/parse sk: {}", e))?
+    };
 
     let light_client_opts = LightClientOpts::new(
-        args.chain_id.clone(),
+        args.chain_id.to_string(),
         args.trusted_height.into(),
         Vec::from(args.trusted_hash)
             .try_into()
@@ -70,42 +81,42 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         args.tcbinfo_contract.map(|c| c.to_string()),
         args.dcap_verifier_contract.map(|c| c.to_string()),
     );
+    let chain_client = DefaultChainClient::new(
+        args.chain_id,
+        sk,
+        args.grpc_url,
+        args.node_url,
+        args.ws_url.clone(),
+        args.trusted_height,
+        args.trusted_hash,
+    );
 
-    let ws_config = WsListenerConfig {
-        node_url: args.node_url,
-        ws_url: args.ws_url,
-        grpc_url: args.grpc_url,
-        tx_sender: args.tx_sender,
-        trusted_hash: args.trusted_hash,
-        trusted_height: args.trusted_height,
-        chain_id: args.chain_id,
-        admin_sk,
-    };
+    let enclave = DefaultSharedEnclave::shared(attestor, config, ());
+    let host =
+        DefaultHost::<EnclaveRequest, EnclaveEvent, _>::new(enclave.clone(), chain_client, gas_fn);
 
-    // Event queue
-    let (tx, mut rx) = mpsc::channel::<TransfersOp<DefaultAttestor>>(1);
-    // Consumer task: dequeue and process events
     tokio::spawn(async move {
-        while let Some(op) = rx.recv().await {
-            if let Err(e) = op.client.process(op.event, op.config).await {
-                println!("Error processing queued event: {}", e);
-            }
-        }
+        Server::builder()
+            .add_service(CoreServer::new(enclave.clone()))
+            .add_service(SettlementServer::new(enclave))
+            .serve(args.rpc_addr)
+            .await
     });
-
-    let contract = Arc::new(Mutex::new(None));
-    let sk = Arc::new(Mutex::new(None));
-
-    QuartzServer::new(
-        config.clone(),
-        contract.clone(),
-        sk.clone(),
-        attestor.clone(),
-        ws_config,
-    )
-    .add_service(TransfersService::new(config, sk, contract, attestor, tx))
-    .serve(args.rpc_addr)
-    .await?;
+    host.serve(args.ws_url).await?;
 
     Ok(())
+}
+
+fn gas_fn(response: &EnclaveResponse) -> DefaultTxConfig {
+    if matches!(
+        response,
+        EnclaveResponse::Update(_) | EnclaveResponse::QueryResponse(_)
+    ) {
+        DefaultTxConfig {
+            gas: 2000000,
+            amount: "11000untrn".to_string(),
+        }
+    } else {
+        unreachable!()
+    }
 }

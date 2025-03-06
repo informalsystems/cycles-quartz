@@ -26,7 +26,6 @@ default = []
 # external
 async-trait = "0.1.81"
 anyhow = { version = "1.0.86" }
-base64 = "0.22.1"
 clap = { version = "4.1.8", default-features = false, features = [
     "derive",
     "std",
@@ -43,9 +42,7 @@ serde = { version = "1.0.203", default-features = false, features = ["derive"] }
 serde_json = { version = "1.0.94", default-features = false, features = [
     "alloc",
 ] }
-sha2 = { version = "0.10.8", default-features = false }
 reqwest = "0.12.7"
-thiserror = { version = "1.0.49", default-features = false }
 tokio = { version = "1.39.2", default-features = false, features = [
     "macros",
     "rt",
@@ -56,10 +53,9 @@ tonic = { version = "0.12.1", default-features = false, features = [
     "transport",
 ] }
 tracing = "0.1.39"
-futures-util = "0.3.30"
 
 # cosmos
-cosmrs = { version = "0.18.0", default-features = false }
+cosmrs = { version = "0.18.0", default-features = false, features = ["getrandom"] }
 cosmwasm-std = { version = "2.1.1", default-features = false, features = [
     "std",
 ] }
@@ -71,12 +67,7 @@ tendermint-light-client = { version = "=0.38.1", default-features = false, featu
 transfers-contract = { path = "../contracts", default-features = false }
 
 # quartz
-cw-client = { version = "0.1.0", default-features = false }
 quartz-common = { version = "0.1.1", features = ["full"] }
-quartz-tm-prover = { version = "0.1.0", default-features = false }
-
-[dev-dependencies]
-cw-multi-test = "2.1.0"
 
 [build-dependencies]
 tonic-build = { version = "0.12.1", default-features = false, features = [

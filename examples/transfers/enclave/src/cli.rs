@@ -5,7 +5,7 @@ use color_eyre::eyre::{eyre, Result};
 use cosmrs::AccountId;
 use quartz_common::enclave::types::Fmspc;
 use reqwest::Url;
-use tendermint::Hash;
+use tendermint::{chain::Id, Hash};
 use tendermint_light_client::types::{Height, TrustThreshold};
 
 fn parse_trust_threshold(s: &str) -> Result<TrustThreshold> {
@@ -27,7 +27,7 @@ pub struct Cli {
 
     /// Identifier of the chain
     #[clap(long)]
-    pub chain_id: String,
+    pub chain_id: Id,
 
     /// FMSPC (Family-Model-Stepping-Platform-Custom SKU)
     #[clap(long)]
