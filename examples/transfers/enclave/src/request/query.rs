@@ -1,7 +1,7 @@
 use cosmwasm_std::{Addr, HexBinary, Uint128};
 use k256::ecdsa::VerifyingKey;
 use quartz_common::enclave::{
-    handler::Handler, key_manager::KeyManager, DefaultSharedEnclave, Enclave,
+    handler::Handler, key_manager::KeyManager, DefaultSharedEnclave,
 };
 use serde::{Deserialize, Serialize};
 use tonic::Status;
@@ -36,8 +36,7 @@ impl Handler<DefaultSharedEnclave<()>> for QueryRequest {
             &[0] => State::default(),
             state_bytes => {
                 let sk = ctx
-                    .key_manager()
-                    .await
+                    .key_manager
                     .priv_key()
                     .await
                     .ok_or_else(|| Status::internal("failed to get private key"))?;
