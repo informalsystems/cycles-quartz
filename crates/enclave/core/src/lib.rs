@@ -58,13 +58,25 @@ pub struct DefaultEnclave<C, A = DefaultAttestor, K = DefaultKeyManager, S = Def
     pub ctx: C,
 }
 
-impl<C> DefaultSharedEnclave<C> {
+impl<C: Send + Sync + 'static> DefaultSharedEnclave<C> {
     pub fn shared(attestor: DefaultAttestor, config: Config, ctx: C) -> DefaultSharedEnclave<C> {
         DefaultSharedEnclave {
             attestor,
             key_manager: SharedKeyManager::wrapping(DefaultKeyManager::default()),
             store: SharedStore::wrapping(DefaultStore::new(config)),
             ctx,
+        }
+    }
+
+    pub fn with_key_manager<K: KeyManager>(
+        self,
+        key_manager: K,
+    ) -> DefaultEnclave<C, <Self as Enclave>::Attestor, K, <Self as Enclave>::Store> {
+        DefaultEnclave {
+            attestor: self.attestor,
+            key_manager,
+            store: self.store,
+            ctx: self.ctx,
         }
     }
 }

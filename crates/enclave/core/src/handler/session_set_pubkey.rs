@@ -1,5 +1,4 @@
 use cosmrs::AccountId;
-use k256::ecdsa::VerifyingKey;
 use quartz_contract_core::{
     msg::execute::{attested::Attested, session_set_pub_key::SessionSetPubKey},
     state::{Session, SESSION_KEY},
@@ -24,7 +23,7 @@ use crate::{
 impl<E> Handler<E> for RawSessionSetPubKeyRequest
 where
     E: Enclave,
-    E::KeyManager: KeyManager<PubKey = VerifyingKey>,
+    E::KeyManager: KeyManager,
     E::Store: Store<Contract = AccountId>,
 {
     type Error = Status;
@@ -72,12 +71,15 @@ where
 
         // generate enclave key
         ctx.key_manager().await.keygen().await;
-        let pk = ctx
-            .key_manager()
-            .await
-            .pub_key()
-            .await
-            .ok_or_else(|| Status::internal("failed to get public key"))?;
+        let pk = {
+            let pk = ctx
+                .key_manager()
+                .await
+                .pub_key()
+                .await
+                .ok_or_else(|| Status::internal("failed to get public key"))?;
+            serde_json::to_vec(&pk).expect("pubkey serialization failure")
+        };
 
         // create `SessionSetPubKey` msg and attest to it
         let msg = SessionSetPubKey::new(nonce, pk);
