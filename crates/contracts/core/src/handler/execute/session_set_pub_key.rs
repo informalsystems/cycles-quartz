@@ -13,7 +13,7 @@ impl Handler for SessionSetPubKey {
         let (nonce, pub_key) = self.into_tuple();
 
         let session = session
-            .with_pub_key(nonce, pub_key)
+            .with_pub_key(nonce, pub_key.clone())
             .ok_or(Error::BadSessionTransition)?;
         SESSION.save(deps.storage, &session).map_err(Error::Std)?;
 
@@ -24,9 +24,6 @@ impl Handler for SessionSetPubKey {
 
         Ok(Response::new()
             .add_attribute("action", "session_set_pub_key")
-            .add_attribute(
-                "pub_key",
-                HexBinary::from(pub_key.to_sec1_bytes().into_vec()).to_hex(),
-            ))
+            .add_attribute("pub_key", HexBinary::from(pub_key).to_hex()))
     }
 }

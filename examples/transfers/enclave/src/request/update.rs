@@ -95,8 +95,7 @@ impl Handler<DefaultSharedEnclave<()>> for UpdateRequest {
             &[0] => State::default(),
             state_bytes => {
                 let sk = ctx
-                    .key_manager()
-                    .await
+                    .key_manager
                     .priv_key()
                     .await
                     .ok_or_else(|| Status::internal("failed to get private key"))?;
@@ -116,8 +115,7 @@ impl Handler<DefaultSharedEnclave<()>> for UpdateRequest {
                     // Decrypt transfer ciphertext into cleartext struct (acquires lock on enclave sk to do so)
                     let transfer: ClearTextTransferRequestMsg = {
                         let sk = ctx
-                            .key_manager()
-                            .await
+                            .key_manager
                             .priv_key()
                             .await
                             .ok_or_else(|| Status::internal("failed to get private key"))?;

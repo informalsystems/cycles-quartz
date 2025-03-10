@@ -1,10 +1,8 @@
 use cosmwasm_schema::cw_serde;
 use cosmwasm_std::{HexBinary, StdError};
-use k256::ecdsa::VerifyingKey;
 use sha2::{Digest, Sha256};
 
 use crate::{
-    error::Error,
     msg::{execute::attested::HasUserData, HasDomainType},
     state::{Nonce, UserData},
 };
@@ -12,15 +10,15 @@ use crate::{
 #[derive(Clone, Debug, PartialEq)]
 pub struct SessionSetPubKey {
     nonce: Nonce,
-    pub_key: VerifyingKey,
+    pub_key: Vec<u8>,
 }
 
 impl SessionSetPubKey {
-    pub fn new(nonce: Nonce, pub_key: VerifyingKey) -> Self {
+    pub fn new(nonce: Nonce, pub_key: Vec<u8>) -> Self {
         Self { nonce, pub_key }
     }
 
-    pub fn into_tuple(self) -> (Nonce, VerifyingKey) {
+    pub fn into_tuple(self) -> (Nonce, Vec<u8>) {
         (self.nonce, self.pub_key)
     }
 }
@@ -42,10 +40,10 @@ impl TryFrom<RawSessionSetPubKey> for SessionSetPubKey {
 
     fn try_from(value: RawSessionSetPubKey) -> Result<Self, Self::Error> {
         let nonce = value.nonce.to_array()?;
-        let pub_key = VerifyingKey::from_sec1_bytes(&value.pub_key)
-            .map_err(Error::from)
-            .map_err(|e| StdError::generic_err(e.to_string()))?;
-        Ok(Self { nonce, pub_key })
+        Ok(Self {
+            nonce,
+            pub_key: value.pub_key.into(),
+        })
     }
 }
 
@@ -53,7 +51,7 @@ impl From<SessionSetPubKey> for RawSessionSetPubKey {
     fn from(value: SessionSetPubKey) -> Self {
         Self {
             nonce: value.nonce.into(),
-            pub_key: value.pub_key.to_sec1_bytes().into_vec().into(),
+            pub_key: value.pub_key.into(),
         }
     }
 }
